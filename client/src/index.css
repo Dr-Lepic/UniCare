@@ -438,6 +438,76 @@ a { color: var(--accent); text-decoration: none; }
 .appt-actions { display: flex; align-items: center; gap: .5rem; }
 
 /* ═══════════════════════════════════════════
+   PRESCRIPTIONS
+═══════════════════════════════════════════ */
+.rx-list { display: flex; flex-direction: column; gap: .9rem; }
+.rx-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-xs);
+  padding: 1.1rem;
+}
+.rx-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; margin-bottom: .75rem; }
+
+.rx-meds { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+.rx-meds li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+  padding: .45rem .65rem;
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+}
+.rx-med-name { font-weight: 600; }
+.rx-med-detail { color: var(--text-sub); text-align: right; }
+.rx-notes {
+  margin-top: .75rem; padding: .6rem .75rem;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm); color: var(--text-sub);
+}
+
+/* Doctor form rows */
+.rx-form-row { display: flex; gap: .75rem; align-items: flex-end; margin-bottom: .8rem; }
+.rx-stock { display: block; margin-top: .35rem; font-size: var(--fs-xs); color: var(--muted); }
+.rx-stock--low { color: #b45309; font-weight: 600; }
+
+/* Share box */
+.rx-share { margin-top: 1rem; padding-top: .9rem; border-top: 1px solid var(--border); }
+.rx-share-row { display: flex; gap: .5rem; }
+.rx-share-row input {
+  flex: 1; padding: .45rem .6rem;
+  border: 1px solid var(--border-strong); border-radius: var(--r-md);
+  background: var(--surface); color: var(--text-sub);
+  font-family: ui-monospace, monospace; font-size: var(--fs-xs);
+}
+.rx-share-note { margin-top: .5rem; font-size: var(--fs-xs); color: var(--muted); }
+.link-btn { border: none; background: none; color: var(--accent); font: inherit; font-size: var(--fs-xs); font-weight: 600; cursor: pointer; padding: 0; }
+.link-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════
+   SHARED PRESCRIPTION (public /rx/:token)
+═══════════════════════════════════════════ */
+.share-page { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; background: var(--surface); }
+.share-card {
+  width: 100%; max-width: 480px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  box-shadow: var(--shadow-md);
+  padding: 1.75rem;
+}
+.share-brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; margin-bottom: 1.25rem; }
+.share-brand-icon { display: grid; place-items: center; width: 32px; height: 32px; background: var(--accent-weak); border-radius: var(--r-sm); }
+.share-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.share-name { font-size: var(--fs-lg); font-weight: 700; }
+.share-doctor { font-size: var(--fs-sm); color: var(--text-sub); margin: .5rem 0 1.1rem; }
+.share-footer { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: var(--fs-xs); color: var(--muted); }
+.share-message { padding: 1.5rem 0; text-align: center; color: var(--text-sub); }
+
+/* ═══════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════ */
 @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -448,4 +518,5 @@ a { color: var(--accent); text-decoration: none; }
   .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .dash-hero { padding: 1.35rem; }
+  .rx-form-row { flex-wrap: wrap; }
 }

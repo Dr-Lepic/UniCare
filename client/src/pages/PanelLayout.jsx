@@ -11,7 +11,7 @@ const ROLE_CONFIG = {
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
       { to: 'appointments', icon: '📅', label: 'Appointments' },
-      { icon: '📋', label: 'Prescriptions', coming: 'M3' },
+      { to: 'prescriptions', icon: '📋', label: 'Prescriptions' },
       { icon: '💰', label: 'Reimbursements',coming: 'M6' },
     ],
   },
@@ -23,7 +23,7 @@ const ROLE_CONFIG = {
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
       { to: 'appointments', icon: '📅', label: 'Appointment Queue' },
-      { icon: '✍️', label: 'Write Prescription',coming: 'M3' },
+      { to: 'prescriptions', icon: '✍️', label: 'Prescriptions' },
       { icon: '💰', label: 'Review Claims',    coming: 'M6' },
     ],
   },
