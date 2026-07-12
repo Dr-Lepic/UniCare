@@ -6,6 +6,7 @@ import Appointments   from './pages/Appointments'
 import Prescriptions  from './pages/Prescriptions'
 import SharedPrescription from './pages/SharedPrescription'
 import ProtectedRoute from './components/ProtectedRoute'
+import Dispense       from './pages/Dispense'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="appointments" element={<Appointments />} />
         <Route path="prescriptions" element={<Prescriptions />} />
+        <Route path="dispense" element={<Dispense />} />
       </Route>
 
       {/* Catch-all */}

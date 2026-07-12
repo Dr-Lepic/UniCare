@@ -20,6 +20,9 @@ const prescriptionSchema = new mongoose.Schema(
     // Shareable "sick-leave" link (Milestone 4). Sparse so unshared prescriptions don't collide on null.
     shareToken:          { type: String, index: { unique: true, sparse: true } },
     shareTokenExpiresAt: { type: Date },
+
+    // Medicine collection status (Milestone 5)
+    status:              { type: String, enum: ['pending', 'dispensed'], default: 'pending' },
   },
   { timestamps: true }
 )

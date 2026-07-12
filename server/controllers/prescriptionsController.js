@@ -2,11 +2,14 @@ const crypto       = require('crypto')
 const User         = require('../models/User')
 const Medicine     = require('../models/Medicine')
 const Prescription = require('../models/Prescription')
+const OTP          = require('../models/OTP')
+const InventoryLog = require('../models/InventoryLog')
+const { sendOTPEmail } = require('../utils/mailer')
 
 const SHARE_TTL_DAYS = 30
 
 const POPULATE = [
-  { path: 'student', select: 'name studentId department' },
+  { path: 'student', select: 'name studentId department email' },
   { path: 'doctor',  select: 'name specialty' },
   { path: 'medicines.medicine', select: 'name unit stockQty' },
 ]
@@ -62,6 +65,27 @@ const create = async (req, res, next) => {
     })
 
     const populated = await prescription.populate(POPULATE)
+
+    // Generate a 6-digit numeric OTP code
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days expiry
+
+    await OTP.create({
+      prescription: prescription._id,
+      student: student._id,
+      code,
+      expiresAt
+    })
+
+    // Email OTP asynchronously
+    const medicinesDetails = populated.medicines.map(m => ({
+      name: m.medicine?.name || 'Unknown Medicine',
+      dosage: m.dosage,
+      qty: m.qty,
+      unit: m.medicine?.unit
+    }))
+    sendOTPEmail(student.email, student.name, code, medicinesDetails)
+
     res.status(201).json(populated)
   } catch (err) { next(err) }
 }
@@ -71,6 +95,21 @@ const listMine = async (req, res, next) => {
   try {
     const filter = req.user.role === 'doctor' ? { doctor: req.user.id } : { student: req.user.id }
     const prescriptions = await Prescription.find(filter).populate(POPULATE).sort('-createdAt')
+    
+    if (req.user.role === 'student') {
+      const plainPrescriptions = prescriptions.map(p => p.toObject())
+      for (const p of plainPrescriptions) {
+        if (p.status !== 'dispensed') {
+          const otp = await OTP.findOne({ prescription: p._id, used: false, expiresAt: { $gt: new Date() } })
+          if (otp) {
+            p.otpCode = otp.code
+            p.otpExpiresAt = otp.expiresAt
+          }
+        }
+      }
+      return res.json(plainPrescriptions)
+    }
+
     res.json(prescriptions)
   } catch (err) { next(err) }
 }
@@ -103,4 +142,75 @@ const share = async (req, res, next) => {
   } catch (err) { next(err) }
 }
 
-module.exports = { viewShared, create, listMine, getOne, share }
+// POST /api/prescriptions/otp/verify   — pharmacist only
+const verifyOTP = async (req, res, next) => {
+  try {
+    const { code } = req.body
+    if (!code) return res.status(400).json({ message: 'OTP code is required' })
+
+    const otp = await OTP.findOne({ code, used: false, expiresAt: { $gt: new Date() } })
+    if (!otp) return res.status(404).json({ message: 'Invalid or expired OTP code' })
+
+    const prescription = await Prescription.findById(otp.prescription).populate(POPULATE)
+    if (!prescription) return res.status(404).json({ message: 'Prescription not found' })
+
+    if (prescription.status === 'dispensed') {
+      return res.status(400).json({ message: 'This prescription has already been dispensed' })
+    }
+
+    res.json({
+      otpCode: otp.code,
+      expiresAt: otp.expiresAt,
+      prescription
+    })
+  } catch (err) { next(err) }
+}
+
+// POST /api/prescriptions/otp/dispense   — pharmacist only
+const dispensePrescription = async (req, res, next) => {
+  try {
+    const { code } = req.body
+    if (!code) return res.status(400).json({ message: 'OTP code is required' })
+
+    const otp = await OTP.findOne({ code, used: false, expiresAt: { $gt: new Date() } })
+    if (!otp) return res.status(404).json({ message: 'Invalid or expired OTP code' })
+
+    const prescription = await Prescription.findById(otp.prescription)
+    if (!prescription) return res.status(404).json({ message: 'Prescription not found' })
+
+    if (prescription.status === 'dispensed') {
+      return res.status(400).json({ message: 'This prescription has already been dispensed' })
+    }
+
+    // Check stock for all medicines first
+    for (const item of prescription.medicines) {
+      const med = await Medicine.findById(item.medicine)
+      if (!med) return res.status(404).json({ message: 'One or more medicines in prescription not found in inventory' })
+      if (med.stockQty < item.qty) {
+        return res.status(400).json({ message: `Insufficient stock for ${med.name}. Prescribed: ${item.qty}, In stock: ${med.stockQty}` })
+      }
+    }
+
+    // Decrement stock & Log
+    for (const item of prescription.medicines) {
+      await Medicine.findByIdAndUpdate(item.medicine, { $inc: { stockQty: -item.qty } })
+      await InventoryLog.create({
+        medicine: item.medicine,
+        changeQty: -item.qty,
+        reason: 'dispensed',
+        performedBy: req.user.id
+      })
+    }
+
+    // Mark OTP as used and prescription as dispensed
+    otp.used = true
+    await otp.save()
+
+    prescription.status = 'dispensed'
+    await prescription.save()
+
+    res.json({ message: 'Prescription dispensed successfully', prescriptionId: prescription._id })
+  } catch (err) { next(err) }
+}
+
+module.exports = { viewShared, create, listMine, getOne, share, verifyOTP, dispensePrescription }

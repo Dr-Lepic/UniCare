@@ -70,10 +70,17 @@ export default function StudentPrescriptions() {
           <div className="rx-list">
             {prescriptions.map(p => (
               <div key={p._id} className="rx-card">
-                <div className="rx-card-head">
+                <div className="rx-card-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <strong>Dr. {p.doctor?.name}</strong>
-                    <span className="stat-label"> · {p.doctor?.specialty || 'General'}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <strong>Dr. {p.doctor?.name}</strong>
+                      {p.status === 'dispensed' ? (
+                        <span className="status-pill status-pill--completed">Dispensed</span>
+                      ) : (
+                        <span className="status-pill status-pill--pending">Pending Collection</span>
+                      )}
+                    </div>
+                    <span className="stat-label">{p.doctor?.specialty || 'General'}</span>
                   </div>
                   <span className="stat-label">{fmtDate(p.createdAt)}</span>
                 </div>
@@ -86,6 +93,28 @@ export default function StudentPrescriptions() {
                   ))}
                 </ul>
                 {p.notes && <p className="rx-notes">{p.notes}</p>}
+                {p.status !== 'dispensed' && p.otpCode && (
+                  <div style={{
+                    margin: '1rem 0',
+                    padding: '0.6rem 0.8rem',
+                    background: 'var(--surface-2)',
+                    borderRadius: 'var(--r-sm)',
+                    border: '1px dashed var(--border-strong)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}>
+                    <div>
+                      <span className="role-info-label" style={{ fontSize: '0.7rem', display: 'block', marginBottom: '0.1rem' }}>COLLECTION OTP CODE</span>
+                      <strong style={{ fontSize: '1.25rem', letterSpacing: '0.05em', color: 'var(--accent)' }}>{p.otpCode}</strong>
+                    </div>
+                    {p.otpExpiresAt && (
+                      <span className="stat-label" style={{ fontSize: '0.75rem' }}>
+                        Expires: {fmtDate(p.otpExpiresAt)}
+                      </span>
+                    )}
+                  </div>
+                )}
                 <ShareBox prescription={p} />
               </div>
             ))}

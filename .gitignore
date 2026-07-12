@@ -32,3 +32,5 @@ dist-ssr
 
 # Seed Data with sensitive info
 server/seed/seedData.js
+
+cred.txt

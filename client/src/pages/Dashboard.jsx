@@ -56,7 +56,7 @@ const ROLE_DATA = {
       { icon: '🏪', value: 48, label: 'Total Medicines' },
     ],
     actions: [
-      { icon: '🔑', label: 'Verify OTP',         tag: 'M5' },
+      { icon: '🔑', label: 'Verify OTP',         to: 'dispense' },
       { icon: '📦', label: 'Check Inventory',    tag: 'M7' },
       { icon: '🔄', label: 'Log Restock Entry',  tag: 'M7' },
     ],

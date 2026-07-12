@@ -102,7 +102,7 @@ export default function Login() {
 
           <p className="login-hint">
             Demo accounts · <strong>doctor@unicare.edu / doc123</strong><br />
-            student@unicare.edu / student123
+            student1@unicare.edu / 123456
           </p>
         </div>
       </div>

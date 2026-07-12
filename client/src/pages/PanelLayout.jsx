@@ -34,7 +34,7 @@ const ROLE_CONFIG = {
     bgColor:'rgba(124,58,237,.15)',
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
-      { icon: '🔑', label: 'Verify OTP',    coming: 'M5' },
+      { to: 'dispense', icon: '🔑', label: 'Verify OTP' },
       { icon: '📦', label: 'Inventory',     coming: 'M7' },
       { icon: '🔄', label: 'Restock Log',   coming: 'M7' },
     ],
