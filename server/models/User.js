@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema(
 
     // Doctor-specific
     specialty:  String,
+    availability: [{
+      dayOfWeek:           { type: Number, min: 0, max: 6, required: true }, // 0=Sun..6=Sat
+      startTime:           { type: String, required: true }, // "HH:MM"
+      endTime:             { type: String, required: true }, // "HH:MM"
+      slotDurationMinutes: { type: Number, required: true },
+    }],
 
     // Pharmacist-specific
     station:    String,
