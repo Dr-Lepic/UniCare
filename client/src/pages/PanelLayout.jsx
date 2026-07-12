@@ -10,7 +10,7 @@ const ROLE_CONFIG = {
     bgColor:'rgba(59,130,246,.15)',
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
-      { icon: '📅', label: 'Appointments',  coming: 'M2' },
+      { to: 'appointments', icon: '📅', label: 'Appointments' },
       { icon: '📋', label: 'Prescriptions', coming: 'M3' },
       { icon: '💰', label: 'Reimbursements',coming: 'M6' },
     ],
@@ -22,7 +22,7 @@ const ROLE_CONFIG = {
     bgColor:'rgba(13,148,136,.15)',
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
-      { icon: '📅', label: 'Appointment Queue',coming: 'M2' },
+      { to: 'appointments', icon: '📅', label: 'Appointment Queue' },
       { icon: '✍️', label: 'Write Prescription',coming: 'M3' },
       { icon: '💰', label: 'Review Claims',    coming: 'M6' },
     ],
@@ -61,7 +61,10 @@ export default function PanelLayout() {
   const handleLogout = () => { logout(); navigate('/login') }
 
   return (
-    <div className="panel">
+    <div
+      className="panel"
+      style={{ '--accent': cfg.color, '--accent-weak': cfg.bgColor, '--accent-strong': cfg.color, '--focus': cfg.bgColor }}
+    >
       {/* ── Sidebar ── */}
       <aside className="sidebar">
 
@@ -73,11 +76,9 @@ export default function PanelLayout() {
 
         {/* Role card */}
         <div className="sidebar-role-card">
-          <div className="role-avatar" style={{ background: cfg.bgColor, color: cfg.color }}>
-            {cfg.icon}
-          </div>
+          <div className="role-avatar">{cfg.icon}</div>
           <div style={{ overflow: 'hidden' }}>
-            <p className="role-info-label" style={{ color: cfg.color }}>{cfg.label}</p>
+            <p className="role-info-label">{cfg.label}</p>
             <p className="role-info-name">{user?.name ?? '—'}</p>
           </div>
         </div>
@@ -92,9 +93,6 @@ export default function PanelLayout() {
                 key={i}
                 to={`/panel/${role}/${item.to}`}
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                style={({ isActive }) =>
-                  isActive ? { background: cfg.bgColor, color: cfg.color } : {}
-                }
               >
                 <span className="nav-link-icon">{item.icon}</span>
                 {item.label}

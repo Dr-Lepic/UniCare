@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 // Role-specific dashboard content — placeholder data for M1 shells
@@ -12,7 +13,7 @@ const ROLE_DATA = {
       { icon: '💰', value: 0,  label: 'Pending Claims' },
     ],
     actions: [
-      { icon: '📅', label: 'Book Appointment',   tag: 'M2' },
+      { icon: '📅', label: 'Book Appointment',   to: 'appointments' },
       { icon: '📋', label: 'View Prescriptions',  tag: 'M3' },
       { icon: '🔗', label: 'Share Sick Leave',    tag: 'M4' },
       { icon: '💰', label: 'Submit Claim',        tag: 'M6' },
@@ -34,7 +35,7 @@ const ROLE_DATA = {
       { icon: '💰', value: 3,   label: 'Claims to Review' },
     ],
     actions: [
-      { icon: '📋', label: 'View Appointment Queue', tag: 'M2' },
+      { icon: '📋', label: 'View Appointment Queue', to: 'appointments' },
       { icon: '✍️', label: 'Write Prescription',     tag: 'M3' },
       { icon: '💰', label: 'Review Reimbursements',  tag: 'M6' },
     ],
@@ -90,6 +91,7 @@ const ROLE_DATA = {
 
 export default function Dashboard() {
   const { user }   = useAuth()
+  const navigate   = useNavigate()
   const role       = user?.role || 'student'
   const data       = ROLE_DATA[role] ?? ROLE_DATA.student
   const firstName  = user?.name?.split(' ')[0] ?? 'User'
@@ -98,7 +100,7 @@ export default function Dashboard() {
     <div className="dashboard">
 
       {/* Hero banner */}
-      <div className="dash-hero" style={{ background: data.gradient }}>
+      <div className="dash-hero">
         <div>
           <p className="dash-greeting">Good day, {firstName} 👋</p>
           <h2 className="dash-name">{user?.name}</h2>
@@ -112,11 +114,7 @@ export default function Dashboard() {
       {/* Stats */}
       <div className="stats-grid">
         {data.stats.map((s, i) => (
-          <div
-            key={i}
-            className="stat-card"
-            style={{ '--accent': data.accent, borderTopColor: data.accent }}
-          >
+          <div key={i} className="stat-card">
             <span className="stat-icon">{s.icon}</span>
             <p className="stat-value">{s.value}</p>
             <p className="stat-label">{s.label}</p>
@@ -134,12 +132,13 @@ export default function Dashboard() {
               <button
                 key={i}
                 className="action-btn"
-                style={{ '--accent': data.accent }}
-                title={`Available in ${a.tag}`}
+                title={a.to ? undefined : `Available in ${a.tag}`}
+                disabled={!a.to}
+                onClick={a.to ? () => navigate(`/panel/${role}/${a.to}`) : undefined}
               >
                 <span className="action-icon">{a.icon}</span>
                 <span>{a.label}</span>
-                <span className="milestone-tag">{a.tag}</span>
+                {a.tag && <span className="milestone-tag">{a.tag}</span>}
               </button>
             ))}
           </div>
@@ -151,7 +150,7 @@ export default function Dashboard() {
             <ul className="activity-list">
               {data.activity.map((item, i) => (
                 <li key={i} className="activity-item">
-                  <span className="activity-dot" style={{ background: data.accent }} />
+                  <span className="activity-dot" />
                   {item}
                 </li>
               ))}
