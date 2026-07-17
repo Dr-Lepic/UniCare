@@ -14,9 +14,9 @@ const ROLE_DATA = {
     ],
     actions: [
       { icon: '📅', label: 'Book Appointment',   to: 'appointments' },
-      { icon: '📋', label: 'View Prescriptions',  tag: 'M3' },
-      { icon: '🔗', label: 'Share Sick Leave',    tag: 'M4' },
-      { icon: '💰', label: 'Submit Claim',        tag: 'M6' },
+      { icon: '📋', label: 'View Prescriptions',  to: 'prescriptions' },
+      { icon: '🔗', label: 'Share Sick Leave',    to: 'prescriptions' },
+      { icon: '💰', label: 'Submit Claim',        to: 'reimbursements' },
     ],
     activity: [
       'Appointment confirmed — Dr. Mahbub, Jul 5',
@@ -36,8 +36,8 @@ const ROLE_DATA = {
     ],
     actions: [
       { icon: '📋', label: 'View Appointment Queue', to: 'appointments' },
-      { icon: '✍️', label: 'Write Prescription',     tag: 'M3' },
-      { icon: '💰', label: 'Review Reimbursements',  tag: 'M6' },
+      { icon: '✍️', label: 'Write Prescription',     to: 'prescriptions' },
+      { icon: '💰', label: 'Review Reimbursements',  to: 'claims' },
     ],
     activity: [
       'Consulted Student #STU-036 — Jul 5, 10:30 AM',
