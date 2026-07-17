@@ -10,6 +10,7 @@ const appointmentRoutes = require('./routes/appointments')
 const medicineRoutes    = require('./routes/medicines')
 const studentRoutes     = require('./routes/students')
 const prescriptionRoutes = require('./routes/prescriptions')
+const reimbursementRoutes = require('./routes/reimbursements')
 const errorHandler      = require('./middleware/errorHandler')
 
 const app = express()
@@ -26,6 +27,7 @@ app.use('/api/appointments', appointmentRoutes)
 app.use('/api/medicines', medicineRoutes)
 app.use('/api/students', studentRoutes)
 app.use('/api/prescriptions', prescriptionRoutes)
+app.use('/api/reimbursements', reimbursementRoutes)
 
 app.get('/', (_, res) => res.send('UniCare API running ✅'))
 
