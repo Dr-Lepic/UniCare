@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
 
+const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+
 export default function PharmacistInventory() {
   const [medicines, setMedicines] = useState([])
   const [loading, setLoading]     = useState(true)
