@@ -35,8 +35,8 @@ const ROLE_CONFIG = {
     nav: [
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
       { to: 'dispense', icon: '🔑', label: 'Verify OTP' },
-      { icon: '📦', label: 'Inventory',     coming: 'M7' },
-      { icon: '🔄', label: 'Restock Log',   coming: 'M7' },
+      { to: 'inventory', icon: '📦', label: 'Inventory' },
+      { to: 'restock-log', icon: '🔄', label: 'Restock Log' },
     ],
   },
   admin: {
