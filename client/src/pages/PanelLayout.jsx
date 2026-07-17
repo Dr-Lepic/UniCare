@@ -12,7 +12,7 @@ const ROLE_CONFIG = {
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
       { to: 'appointments', icon: '📅', label: 'Appointments' },
       { to: 'prescriptions', icon: '📋', label: 'Prescriptions' },
-      { icon: '💰', label: 'Reimbursements',coming: 'M6' },
+      { to: 'reimbursements', icon: '💰', label: 'Reimbursements' },
     ],
   },
   doctor: {
@@ -24,7 +24,7 @@ const ROLE_CONFIG = {
       { to: 'dashboard', icon: '📊', label: 'Dashboard' },
       { to: 'appointments', icon: '📅', label: 'Appointment Queue' },
       { to: 'prescriptions', icon: '✍️', label: 'Prescriptions' },
-      { icon: '💰', label: 'Review Claims',    coming: 'M6' },
+      { to: 'claims', icon: '💰', label: 'Review Claims' },
     ],
   },
   pharmacist: {
