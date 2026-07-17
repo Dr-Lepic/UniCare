@@ -7,6 +7,10 @@ import Prescriptions  from './pages/Prescriptions'
 import SharedPrescription from './pages/SharedPrescription'
 import ProtectedRoute from './components/ProtectedRoute'
 import Dispense       from './pages/Dispense'
+import StudentReimbursements from './pages/StudentReimbursements'
+import DoctorClaims   from './pages/DoctorClaims'
+import PharmacistInventory from './pages/PharmacistInventory'
+import PharmacistRestockLog from './pages/PharmacistRestockLog'
 
 export default function App() {
   return (
@@ -24,6 +28,10 @@ export default function App() {
         <Route path="appointments" element={<Appointments />} />
         <Route path="prescriptions" element={<Prescriptions />} />
         <Route path="dispense" element={<Dispense />} />
+        <Route path="reimbursements" element={<StudentReimbursements />} />
+        <Route path="claims" element={<DoctorClaims />} />
+        <Route path="inventory" element={<PharmacistInventory />} />
+        <Route path="restock-log" element={<PharmacistRestockLog />} />
       </Route>
 
       {/* Catch-all */}
