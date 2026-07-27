@@ -30,7 +30,4 @@ dist-ssr
 .env
 .env.*
 
-# Seed Data with sensitive info
-server/seed/seedData.js
-
 cred.txt

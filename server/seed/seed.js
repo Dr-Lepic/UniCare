@@ -6,6 +6,7 @@ const User     = require('../models/User')
 const Medicine = require('../models/Medicine')
 
 const seedUsers = [
+  { name: 'Dr. Wahid Azhar',   email: 'wahidazhar@iut-dhaka.edu', password: '123456', role: 'doctor',      specialty: 'General Physician' },
   { name: 'Dr. Kamal Hossain', email: 'doctor1@unicare.edu',     password: '123456', role: 'doctor',      specialty: 'General Physician' },
   { name: 'Dr. Nusrat Jahan',  email: 'doctor2@unicare.edu',     password: '123456', role: 'doctor',      specialty: 'Dermatologist' },
   { name: 'Pharmacist Shirin', email: 'pharmacist1@unicare.edu', password: '123456', role: 'pharmacist',  station: 'Pharmacy Counter 1' },

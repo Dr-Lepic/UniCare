@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Outlet, NavLink, useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import ChangePasswordModal from '../components/ChangePasswordModal'
 
 // Role configuration — expand nav arrays in future milestones
 const ROLE_CONFIG = {
@@ -56,6 +58,7 @@ export default function PanelLayout() {
   const { role }     = useParams()
   const { user, logout } = useAuth()
   const navigate     = useNavigate()
+  const [isPassModalOpen, setIsPassModalOpen] = useState(false)
   const cfg          = ROLE_CONFIG[role] ?? ROLE_CONFIG.student
 
   const handleLogout = () => { logout(); navigate('/login') }
@@ -107,7 +110,15 @@ export default function PanelLayout() {
           )}
         </nav>
 
-        {/* Logout */}
+        {/* Change Password & Logout */}
+        <button
+          className="sidebar-logout"
+          style={{ marginBottom: '.4rem' }}
+          onClick={() => setIsPassModalOpen(true)}
+        >
+          🔒 Change Password
+        </button>
+
         <button className="sidebar-logout" onClick={handleLogout}>
           🚪 Sign Out
         </button>
@@ -117,6 +128,13 @@ export default function PanelLayout() {
       <main className="panel-main">
         <Outlet />
       </main>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isPassModalOpen}
+        onClose={() => setIsPassModalOpen(false)}
+      />
     </div>
   )
 }
+
