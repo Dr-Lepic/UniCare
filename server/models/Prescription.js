@@ -14,6 +14,9 @@ const prescriptionSchema = new mongoose.Schema(
     doctor:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     student:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     appointment: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }, // optional (standalone Rx)
+    symptoms:    { type: String },
+    diagnosis:   { type: String },
+    tests:       { type: String },
     medicines:   { type: [lineItemSchema], validate: v => v.length > 0 },
     notes:       { type: String },
 

@@ -84,6 +84,11 @@ export default function StudentPrescriptions() {
                   </div>
                   <span className="stat-label">{fmtDate(p.createdAt)}</span>
                 </div>
+                <div style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+                  {p.diagnosis && <div><strong>Diagnosis:</strong> {p.diagnosis}</div>}
+                  {p.symptoms && <div><strong>Symptoms:</strong> {p.symptoms}</div>}
+                  {p.tests && <div><strong>Tests:</strong> {p.tests}</div>}
+                </div>
                 <ul className="rx-meds">
                   {p.medicines.map((m, i) => (
                     <li key={i}>

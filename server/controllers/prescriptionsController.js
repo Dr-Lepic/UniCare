@@ -20,6 +20,9 @@ const publicView = (p) => ({
   createdAt: p.createdAt,
   doctor: p.doctor && { name: p.doctor.name, specialty: p.doctor.specialty },
   student: p.student && { name: p.student.name, studentId: p.student.studentId },
+  symptoms: p.symptoms,
+  diagnosis: p.diagnosis,
+  tests: p.tests,
   notes: p.notes,
   medicines: p.medicines.map(m => ({ name: m.medicine?.name, unit: m.medicine?.unit, dosage: m.dosage, qty: m.qty })),
 })
@@ -38,7 +41,7 @@ const viewShared = async (req, res, next) => {
 // POST /api/prescriptions   — doctor only
 const create = async (req, res, next) => {
   try {
-    const { studentId, appointmentId, medicines, notes } = req.body
+    const { studentId, appointmentId, symptoms, diagnosis, tests, medicines, notes } = req.body
 
     const student = await User.findOne({ _id: studentId, role: 'student' })
     if (!student) return res.status(404).json({ message: 'Student not found' })
@@ -60,6 +63,9 @@ const create = async (req, res, next) => {
       doctor: req.user.id,
       student: student._id,
       appointment: appointmentId || undefined,
+      symptoms,
+      diagnosis,
+      tests,
       medicines: lineItems,
       notes,
     })

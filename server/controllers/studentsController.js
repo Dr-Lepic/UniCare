@@ -8,7 +8,7 @@ const listStudents = async (req, res, next) => {
       const rx = new RegExp(req.query.q, 'i')
       filter.$or = [{ name: rx }, { studentId: rx }]
     }
-    const students = await User.find(filter).select('name studentId department').sort('name')
+    const students = await User.find(filter).select('name studentId department age program contact').sort('name')
     res.json(students)
   } catch (err) { next(err) }
 }
