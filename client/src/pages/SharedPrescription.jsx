@@ -51,6 +51,12 @@ export default function SharedPrescription() {
               {rx.doctor?.specialty ? ` · ${rx.doctor.specialty}` : ''}
             </p>
 
+            <div style={{ margin: '1rem 0', fontSize: '0.9rem' }}>
+              {rx.diagnosis && <div><strong>Diagnosis:</strong> {rx.diagnosis}</div>}
+              {rx.symptoms && <div><strong>Symptoms:</strong> {rx.symptoms}</div>}
+              {rx.tests && <div><strong>Tests:</strong> {rx.tests}</div>}
+            </div>
+
             <ul className="rx-meds">
               {rx.medicines.map((m, i) => (
                 <li key={i}>

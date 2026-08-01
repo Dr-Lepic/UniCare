@@ -4,6 +4,7 @@ const bcrypt   = require('bcryptjs')
 require('dotenv').config({ path: '../.env' })
 const User     = require('../models/User')
 const Medicine = require('../models/Medicine')
+const Prescription = require('../models/Prescription')
 
 const seedUsers = [
   { name: 'Dr. Wahid Azhar',   email: 'wahidazhar@iut-dhaka.edu', password: '123456', role: 'doctor',      specialty: 'General Physician' },
@@ -11,8 +12,8 @@ const seedUsers = [
   { name: 'Dr. Nusrat Jahan',  email: 'doctor2@unicare.edu',     password: '123456', role: 'doctor',      specialty: 'Dermatologist' },
   { name: 'Pharmacist Shirin', email: 'pharmacist1@unicare.edu', password: '123456', role: 'pharmacist',  station: 'Pharmacy Counter 1' },
   { name: 'Admin User',        email: 'admin@unicare.edu',       password: '123456', role: 'admin' },
-  { name: 'Rafiq Ahmed',       email: 'student1@unicare.edu',    password: '123456', role: 'student',     studentId: '200041101', department: 'CSE' },
-  { name: 'Mim Akter',         email: 'student2@unicare.edu',    password: '123456', role: 'student',     studentId: '200041102', department: 'EEE' },
+  { name: 'Rafiq Ahmed',       email: 'student1@unicare.edu',    password: '123456', role: 'student',     studentId: '200041101', department: 'CSE', age: 22, program: 'B.Sc. CSE', contact: '+8801711000000' },
+  { name: 'Mim Akter',         email: 'student2@unicare.edu',    password: '123456', role: 'student',     studentId: '200041102', department: 'EEE', age: 21, program: 'B.Sc. EEE', contact: '+8801711000001' },
 ]
 
 const seedMedicines = [
@@ -38,8 +39,26 @@ const runSeed = async () => {
 
     await Medicine.deleteMany({})
     await Medicine.insertMany(seedMedicines.map(m => ({ ...m, lastRestockedAt: new Date() })))
+    
+    await Prescription.deleteMany({})
+    
+    const doc1 = await User.findOne({ email: 'doctor1@unicare.edu' })
+    const stu1 = await User.findOne({ email: 'student1@unicare.edu' })
+    const med1 = await Medicine.findOne({ name: 'Paracetamol 500mg' })
 
-    console.log(`✅ ${seedUsers.length} users, ${seedMedicines.length} medicines seeded`)
+    if (doc1 && stu1 && med1) {
+      await Prescription.create({
+        doctor: doc1._id,
+        student: stu1._id,
+        symptoms: 'Fever, Body ache',
+        diagnosis: 'Viral Fever',
+        tests: 'CBC, Dengue NS1',
+        medicines: [{ medicine: med1._id, dosage: '1 tablet 3 times after meal', qty: 10 }],
+        notes: 'Take rest for 2 days. Drink plenty of water.'
+      })
+    }
+
+    console.log(`✅ ${seedUsers.length} users, ${seedMedicines.length} medicines, and 1 prescription seeded`)
     console.log('All passwords: 123456')
     process.exit(0)
   } catch (err) {

@@ -15,7 +15,7 @@ const seed = async () => {
     { name: 'Dr. Mahbub Rahman', email: 'doctor@unicare.edu',      password: await h('doc123'),     role: 'doctor',      specialty: 'General Medicine' },
     { name: 'Pharmacist Asif',   email: 'pharmacist@unicare.edu',  password: await h('pharma123'),  role: 'pharmacist',  station: 'Main Pharmacy' },
     { name: 'Admin User',        email: 'admin@unicare.edu',       password: await h('admin123'),   role: 'admin' },
-    { name: 'Student WMBA',      email: 'student@unicare.edu',     password: await h('student123'), role: 'student',     studentId: 'STU-036', department: 'Computer Science' },
+    { name: 'Student WMBA',      email: 'student@unicare.edu',     password: await h('student123'), role: 'student',     studentId: '220042136', department: 'CSE', age: 23, program: 'SWE', contact: '+8801700000002' },
   ])
 
   console.log('\n✅ Seed complete. Login credentials:')

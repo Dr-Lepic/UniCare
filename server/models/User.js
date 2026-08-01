@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema(
     // Student-specific
     studentId:  String,
     department: String,
+    age:        Number,
+    program:    String,
+    contact:    String,
 
     // Doctor-specific
     specialty:  String,
