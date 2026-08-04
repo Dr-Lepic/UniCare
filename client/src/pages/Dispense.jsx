@@ -119,7 +119,7 @@ export default function Dispense() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <span className="role-info-label" style={{ fontSize: '0.75rem' }}>PRESCRIBED BY</span>
-                  <p style={{ margin: '0.1rem 0', fontWeight: '600' }}>Dr. {prescription.doctor?.name}</p>
+                  <p style={{ margin: '0.1rem 0', fontWeight: '600' }}>{prescription.doctor?.name}</p>
                   <span className="stat-label">{prescription.doctor?.specialty || 'General'}</span>
                 </div>
               </div>

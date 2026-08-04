@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     age:        Number,
     program:    String,
     contact:    String,
+    medicalDetails: String, // Base64 encoded string stored in DB
 
     // Doctor-specific
     specialty:  String,

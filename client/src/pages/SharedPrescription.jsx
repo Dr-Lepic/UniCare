@@ -47,7 +47,7 @@ export default function SharedPrescription() {
             </div>
 
             <p className="share-doctor">
-              Prescribed by <strong>Dr. {rx.doctor?.name}</strong>
+              Prescribed by <strong>{rx.doctor?.name}</strong>
               {rx.doctor?.specialty ? ` · ${rx.doctor.specialty}` : ''}
             </p>
 

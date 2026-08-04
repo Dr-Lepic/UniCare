@@ -15,6 +15,7 @@ const ROLE_CONFIG = {
       { to: 'appointments', icon: '📅', label: 'Appointments' },
       { to: 'prescriptions', icon: '📋', label: 'Prescriptions' },
       { to: 'reimbursements', icon: '💰', label: 'Reimbursements' },
+      { to: 'medical-details', icon: '🩺', label: 'Medical Profile' },
     ],
   },
   doctor: {

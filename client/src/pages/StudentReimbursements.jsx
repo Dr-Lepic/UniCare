@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-const backendUrl = 'http://localhost:5000'
+const backendUrl = 'http://localhost:5001'
 
 export default function StudentReimbursements() {
   const [prescriptions, setPrescriptions] = useState([])
@@ -129,19 +129,32 @@ export default function StudentReimbursements() {
                 required
               >
                 <option value="">-- Choose Prescription --</option>
-                {prescriptions.map(p => (
-                  <option key={p._id} value={p._id}>
-                    {fmtDate(p.createdAt)} — Dr. {p.doctor?.name} ({p.medicines.map(m => m.medicine?.name).join(', ') || 'Prescription'})
-                  </option>
-                ))}
+                {prescriptions.map(p => {
+                  const hasTests = Boolean(p.tests && p.tests.trim())
+                  return (
+                    <option key={p._id} value={p._id}>
+                      {fmtDate(p.createdAt)} — {p.doctor?.name} {hasTests ? `🧪 [Tests: ${p.tests}]` : `❌ [No Tests - Ineligible]`}
+                    </option>
+                  )
+                })}
               </select>
             </div>
 
             {selectedPrescription && (
               <div className="form-group" style={{ background: 'var(--surface)', padding: '0.75rem', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', marginBottom: '1.1rem' }}>
                 <span className="role-info-label" style={{ fontSize: '0.7rem', display: 'block', marginBottom: '0.2rem' }}>ASSIGNED VERIFIER DOCTOR</span>
-                <strong>Dr. {selectedPrescription.doctor?.name}</strong>
+                <strong>{selectedPrescription.doctor?.name}</strong>
                 <p className="stat-label" style={{ margin: 0 }}>{selectedPrescription.doctor?.specialty || 'General Physician'}</p>
+                
+                {selectedPrescription.tests && selectedPrescription.tests.trim() ? (
+                  <div style={{ marginTop: '0.5rem', color: '#059669', fontSize: '0.85rem' }}>
+                    🧪 <strong>Recommended Tests:</strong> {selectedPrescription.tests}
+                  </div>
+                ) : (
+                  <div style={{ marginTop: '0.5rem', color: '#dc2626', fontSize: '0.85rem', fontWeight: 500 }}>
+                    ⚠️ No recommended lab tests on this prescription. Ineligible for reimbursement claim.
+                  </div>
+                )}
               </div>
             )}
 
@@ -183,7 +196,11 @@ export default function StudentReimbursements() {
               />
             </div>
 
-            <button type="submit" className="btn-submit" disabled={submitting}>
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={submitting || (selectedPrescription && (!selectedPrescription.tests || !selectedPrescription.tests.trim()))}
+            >
               {submitting ? 'Submitting…' : 'Submit Claim'}
             </button>
           </form>
@@ -204,7 +221,7 @@ export default function StudentReimbursements() {
                     <div>
                       <strong style={{ fontSize: 'var(--fs-md)' }}>{c.hospitalName}</strong>
                       <div className="stat-label" style={{ marginTop: '0.1rem' }}>
-                        Submitted on {fmtDate(c.createdAt)} · Assisting Doctor: Dr. {c.doctor?.name}
+                        Submitted on {fmtDate(c.createdAt)} · Assisting Doctor: {c.doctor?.name}
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-const emptyRow = () => ({ medicineId: '', dosage: '', qty: 1 })
+const emptyRow = () => ({ medicineId: '', dosesPerDay: 2, durationDays: 5, dosage: '2 doses/day for 5 days', qty: 10 })
 
 function MedicineSelect({ catalog, value, onChange }) {
   const [query, setQuery] = useState('')
@@ -75,6 +75,7 @@ export default function DoctorPrescriptions() {
   const [studentId, setStudentId]         = useState('')
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [studentSearch, setStudentSearch] = useState('')
+  const [studentMedicalDetails, setStudentMedicalDetails] = useState('')
   
   const [symptoms, setSymptoms]           = useState('')
   const [diagnosis, setDiagnosis]         = useState('')
@@ -94,11 +95,37 @@ export default function DoctorPrescriptions() {
     api.get('/appointments/mine').then(r => setAppointments(r.data))
   }, [])
 
+  useEffect(() => {
+    if (!studentId) {
+      setStudentMedicalDetails('')
+      return
+    }
+    api.get(`/students/${studentId}/medical-details`)
+      .then(r => setStudentMedicalDetails(r.data.medicalDetails || ''))
+      .catch(() => setStudentMedicalDetails(''))
+  }, [studentId])
+
   const stockOf = (id) => catalog.find(m => m._id === id)?.stockQty
   const unitOf  = (id) => catalog.find(m => m._id === id)?.unit
 
-  const updateRow = (i, field, value) =>
-    setRows(rs => rs.map((r, idx) => idx === i ? { ...r, [field]: value } : r))
+  const updateRow = (i, field, value) => {
+    setRows(rs => rs.map((r, idx) => {
+      if (idx !== i) return r
+      const updated = { ...r, [field]: value }
+
+      if (field === 'dosesPerDay' || field === 'durationDays') {
+        const dPerDay = field === 'dosesPerDay' ? Math.max(0, parseInt(value) || 0) : (r.dosesPerDay || 0)
+        const days = field === 'durationDays' ? Math.max(0, parseInt(value) || 0) : (r.durationDays || 0)
+        const newQty = dPerDay * days
+        updated.dosesPerDay = dPerDay
+        updated.durationDays = days
+        updated.qty = newQty > 0 ? newQty : 1
+        updated.dosage = `${dPerDay} dose${dPerDay !== 1 ? 's' : ''}/day for ${days} day${days !== 1 ? 's' : ''}`
+      }
+
+      return updated
+    }))
+  }
 
   const handleStudentSearch = (e) => {
     const val = e.target.value
@@ -194,6 +221,20 @@ export default function DoctorPrescriptions() {
                   <div><strong>Dept:</strong> {selectedStudent.department || 'N/A'}</div>
                   <div><strong>Program:</strong> {selectedStudent.program || 'N/A'}</div>
                 </div>
+
+                <div style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', padding: '0.85rem 1rem', borderRadius: '8px', marginTop: '0.75rem', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                    <strong style={{ color: '#eab308', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      🩺 Patient Medical Details & Allergies
+                    </strong>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.8, background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
+                      Reference Only (Not saved on prescription)
+                    </span>
+                  </div>
+                  <p style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--text)' }}>
+                    {studentMedicalDetails ? studentMedicalDetails : <em>No medical details / allergies reported by student.</em>}
+                  </p>
+                </div>
               </div>
             ) : (
               <div style={{ padding: '1rem', background: 'var(--surface, #1e1e1e)', borderRadius: '8px', border: '1px dashed var(--border)', color: 'var(--text-muted)' }}>
@@ -227,8 +268,8 @@ export default function DoctorPrescriptions() {
             const stock = stockOf(row.medicineId)
             const over  = stock != null && Number(row.qty) > stock
             return (
-              <div key={i} className="rx-form-row" style={{ alignItems: 'flex-start' }}>
-                <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
+              <div key={i} className="rx-form-row" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div className="form-group" style={{ flex: '2 1 200px', marginBottom: 0 }}>
                   <label>Medicine</label>
                   <MedicineSelect 
                     catalog={catalog} 
@@ -241,13 +282,21 @@ export default function DoctorPrescriptions() {
                     </div>
                   )}
                 </div>
-                <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                  <label>Dosage</label>
-                  <input value={row.dosage} placeholder="1 tablet twice daily" onChange={e => updateRow(i, 'dosage', e.target.value)} />
+                <div className="form-group" style={{ flex: '0 0 90px', marginBottom: 0 }}>
+                  <label>Doses/Day</label>
+                  <input type="number" min="1" value={row.dosesPerDay} onChange={e => updateRow(i, 'dosesPerDay', e.target.value)} />
                 </div>
                 <div className="form-group" style={{ flex: '0 0 80px', marginBottom: 0 }}>
-                  <label>Qty</label>
+                  <label>Days</label>
+                  <input type="number" min="1" value={row.durationDays} onChange={e => updateRow(i, 'durationDays', e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: '0 0 90px', marginBottom: 0 }}>
+                  <label>Total Qty</label>
                   <input type="number" min="1" value={row.qty} onChange={e => updateRow(i, 'qty', e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: '2 1 180px', marginBottom: 0 }}>
+                  <label>Dosage Instructions</label>
+                  <input value={row.dosage} placeholder="e.g. 1 tablet after meals" onChange={e => updateRow(i, 'dosage', e.target.value)} />
                 </div>
                 <div style={{ paddingTop: '1.75rem' }}>
                   <button type="button" className="slot-btn" onClick={() => setRows(rs => rs.filter((_, idx) => idx !== i))} disabled={rows.length === 1}>Remove</button>
