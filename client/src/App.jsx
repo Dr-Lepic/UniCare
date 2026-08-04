@@ -8,6 +8,7 @@ import SharedPrescription from './pages/SharedPrescription'
 import ProtectedRoute from './components/ProtectedRoute'
 import Dispense       from './pages/Dispense'
 import StudentReimbursements from './pages/StudentReimbursements'
+import StudentMedicalDetails from './pages/StudentMedicalDetails'
 import DoctorClaims   from './pages/DoctorClaims'
 import PharmacistInventory from './pages/PharmacistInventory'
 import PharmacistRestockLog from './pages/PharmacistRestockLog'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="prescriptions" element={<Prescriptions />} />
         <Route path="dispense" element={<Dispense />} />
         <Route path="reimbursements" element={<StudentReimbursements />} />
+        <Route path="medical-details" element={<StudentMedicalDetails />} />
         <Route path="claims" element={<DoctorClaims />} />
         <Route path="inventory" element={<PharmacistInventory />} />
         <Route path="restock-log" element={<PharmacistRestockLog />} />

@@ -30,6 +30,11 @@ exports.create = async (req, res, next) => {
       return res.status(403).json({ message: 'Access denied: prescription does not belong to you' })
     }
 
+    // Verify prescription has recommended lab tests
+    if (!prescription.tests || !prescription.tests.trim()) {
+      return res.status(400).json({ message: 'Reimbursement claims can only be submitted for prescriptions that include recommended lab tests.' })
+    }
+
     const billFileUrl = `/uploads/${req.file.filename}`
 
     const claim = await ReimbursementClaim.create({
