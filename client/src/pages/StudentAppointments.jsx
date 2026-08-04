@@ -92,7 +92,7 @@ export default function StudentAppointments() {
           myAppointments.map(a => (
             <div key={a._id} className="appt-row">
               <span>
-                Dr. {a.doctor?.name} — {a.date.slice(0, 10)} · {a.timeSlot}
+                {a.doctor?.name} — {a.date.slice(0, 10)} · {a.timeSlot}
               </span>
               <div className="appt-actions">
                 <span className={`status-pill status-pill--${a.status}`}>{a.status}</span>

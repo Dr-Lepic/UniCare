@@ -133,7 +133,7 @@ export default function StudentReimbursements() {
                   const hasTests = Boolean(p.tests && p.tests.trim())
                   return (
                     <option key={p._id} value={p._id}>
-                      {fmtDate(p.createdAt)} — Dr. {p.doctor?.name} {hasTests ? `🧪 [Tests: ${p.tests}]` : `❌ [No Tests - Ineligible]`}
+                      {fmtDate(p.createdAt)} — {p.doctor?.name} {hasTests ? `🧪 [Tests: ${p.tests}]` : `❌ [No Tests - Ineligible]`}
                     </option>
                   )
                 })}
@@ -143,7 +143,7 @@ export default function StudentReimbursements() {
             {selectedPrescription && (
               <div className="form-group" style={{ background: 'var(--surface)', padding: '0.75rem', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', marginBottom: '1.1rem' }}>
                 <span className="role-info-label" style={{ fontSize: '0.7rem', display: 'block', marginBottom: '0.2rem' }}>ASSIGNED VERIFIER DOCTOR</span>
-                <strong>Dr. {selectedPrescription.doctor?.name}</strong>
+                <strong>{selectedPrescription.doctor?.name}</strong>
                 <p className="stat-label" style={{ margin: 0 }}>{selectedPrescription.doctor?.specialty || 'General Physician'}</p>
                 
                 {selectedPrescription.tests && selectedPrescription.tests.trim() ? (
@@ -221,7 +221,7 @@ export default function StudentReimbursements() {
                     <div>
                       <strong style={{ fontSize: 'var(--fs-md)' }}>{c.hospitalName}</strong>
                       <div className="stat-label" style={{ marginTop: '0.1rem' }}>
-                        Submitted on {fmtDate(c.createdAt)} · Assisting Doctor: Dr. {c.doctor?.name}
+                        Submitted on {fmtDate(c.createdAt)} · Assisting Doctor: {c.doctor?.name}
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

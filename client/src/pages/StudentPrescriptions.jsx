@@ -73,7 +73,7 @@ export default function StudentPrescriptions() {
                 <div className="rx-card-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      <strong>Dr. {p.doctor?.name}</strong>
+                      <strong>{p.doctor?.name}</strong>
                       {p.status === 'dispensed' ? (
                         <span className="status-pill status-pill--completed">Dispensed</span>
                       ) : (
