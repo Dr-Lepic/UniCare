@@ -34,5 +34,5 @@ app.get('/', (_, res) => res.send('UniCare API running ✅'))
 // Must be last — catches all next(err) calls
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`))
