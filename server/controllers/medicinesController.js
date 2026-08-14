@@ -1,5 +1,6 @@
 const Medicine = require('../models/Medicine')
 const InventoryLog = require('../models/InventoryLog')
+const { logSystemEvent } = require('../utils/systemLogger')
 
 // GET /api/medicines?q= — list/search for live stock lookup while writing a prescription
 const listMedicines = async (req, res, next) => {
@@ -46,6 +47,13 @@ const create = async (req, res, next) => {
       })
     }
 
+    await logSystemEvent({
+      action: 'medicine_created',
+      category: 'pharmacy',
+      details: `Added new medicine to catalog: ${medicine.name} (${medicine.stockQty} ${medicine.unit}s)`,
+      performedBy: req.user.id
+    })
+
     res.status(201).json(medicine)
   } catch (err) {
     next(err)
@@ -76,6 +84,13 @@ const restock = async (req, res, next) => {
       medicine: medicine._id,
       changeQty: Number(qty),
       reason: 'restocked',
+      performedBy: req.user.id
+    })
+
+    await logSystemEvent({
+      action: 'medicine_restocked',
+      category: 'pharmacy',
+      details: `Restocked ${medicine.name}: +${qty} ${medicine.unit}s (New Stock: ${medicine.stockQty})`,
       performedBy: req.user.id
     })
 
@@ -112,6 +127,14 @@ const updateSettings = async (req, res, next) => {
     }
 
     await medicine.save()
+
+    await logSystemEvent({
+      action: 'medicine_updated',
+      category: 'pharmacy',
+      details: `Updated settings for ${medicine.name} (Threshold: ${medicine.reorderThreshold} ${medicine.unit}s)`,
+      performedBy: req.user.id
+    })
+
     res.json(medicine)
   } catch (err) {
     next(err)

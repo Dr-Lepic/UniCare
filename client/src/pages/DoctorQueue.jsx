@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Plus, Trash2, Check, Save } from 'lucide-react'
 import api from '../api'
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -76,13 +77,38 @@ export default function DoctorQueue() {
                 onChange={e => updateSlot(i, 'slotDurationMinutes', e.target.value)}
               />
             </div>
-            <button className="slot-btn" onClick={() => setAvailability(a => a.filter((_, idx) => idx !== i))}>Remove</button>
+            <button
+              className="slot-btn"
+              onClick={() => setAvailability(a => a.filter((_, idx) => idx !== i))}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            >
+              <Trash2 size={14} /> Remove
+            </button>
           </div>
         ))}
         <div className="appt-actions" style={{ marginTop: '1rem' }}>
-          <button className="slot-btn" onClick={() => setAvailability(a => [...a, emptySlot()])}>+ Add availability</button>
-          <button className="btn-submit" style={{ width: 'auto' }} disabled={saving} onClick={handleSave}>
-            {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Availability'}
+          <button
+            className="slot-btn"
+            onClick={() => setAvailability(a => [...a, emptySlot()])}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            <Plus size={15} /> Add availability
+          </button>
+          <button
+            className="btn-submit"
+            style={{ width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            disabled={saving}
+            onClick={handleSave}
+          >
+            {saving ? 'Saving…' : saved ? (
+              <>
+                <Check size={16} /> Saved
+              </>
+            ) : (
+              <>
+                <Save size={16} /> Save Availability
+              </>
+            )}
           </button>
         </div>
       </div>

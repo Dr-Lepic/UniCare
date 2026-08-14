@@ -2,6 +2,7 @@ const ReimbursementClaim = require('../models/ReimbursementClaim')
 const Prescription = require('../models/Prescription')
 const User = require('../models/User')
 const { sendClaimAssignmentEmail, sendClaimStatusEmail } = require('../utils/mailer')
+const { logSystemEvent } = require('../utils/systemLogger')
 
 exports.create = async (req, res, next) => {
   try {
@@ -62,6 +63,14 @@ exports.create = async (req, res, next) => {
         claim.hospitalName
       )
     }
+
+    await logSystemEvent({
+      action: 'claim_submitted',
+      category: 'reimbursement',
+      details: `Reimbursement claim of ${claim.amount} BDT for ${claim.hospitalName} submitted by ${populatedClaim.student?.name || 'Student'}`,
+      performedBy: req.user.id,
+      targetUser: prescription.doctor
+    })
 
     res.status(201).json(populatedClaim)
   } catch (err) {
@@ -131,6 +140,14 @@ exports.review = async (req, res, next) => {
         claim.reviewNotes
       )
     }
+
+    await logSystemEvent({
+      action: 'claim_reviewed',
+      category: 'reimbursement',
+      details: `Claim of ${claim.amount} BDT ${status} by Dr. ${populatedClaim.doctor?.name || 'Doctor'}`,
+      performedBy: req.user.id,
+      targetUser: claim.student
+    })
 
     res.json(populatedClaim)
   } catch (err) {

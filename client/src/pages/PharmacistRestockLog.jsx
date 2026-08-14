@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { History } from 'lucide-react'
 import api from '../api'
 
 const fmtDateTime = (d) => new Date(d).toLocaleString(undefined, {
@@ -34,13 +35,17 @@ export default function PharmacistRestockLog() {
       {/* Banner */}
       <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem', background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' }}>
         <div>
-          <p className="dash-greeting">🔄 Inventory Logs</p>
+          <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <History size={16} /> Inventory Logs
+          </p>
           <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Transaction History</h2>
           <span className="dash-badge" style={{ background: 'rgba(255, 255, 255, 0.15)' }}>
             Chronological log of all stock increases and dispensing events
           </span>
         </div>
-        <div className="dash-hero-glyph">🔄</div>
+        <div className="dash-hero-glyph">
+          <History size={48} />
+        </div>
       </div>
 
       {error && <div className="alert alert-error" style={{ marginBottom: '1.5rem' }}>{error}</div>}

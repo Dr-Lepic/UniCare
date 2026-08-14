@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { HeartPulse, Plus, Trash2, Save, FileText } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -189,7 +190,9 @@ export default function DoctorPrescriptions() {
   return (
     <div className="dashboard">
       <div className="dash-section">
-        <p className="dash-section-title">Write a Prescription</p>
+        <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <FileText size={16} style={{ color: 'var(--accent)' }} /> Write a Prescription
+        </p>
         <form onSubmit={handleSubmit}>
           
           <div className="form-group">
@@ -225,7 +228,7 @@ export default function DoctorPrescriptions() {
                 <div style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', padding: '0.85rem 1rem', borderRadius: '8px', marginTop: '0.75rem', fontSize: '0.9rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
                     <strong style={{ color: '#eab308', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      🩺 Patient Medical Details & Allergies
+                      <HeartPulse size={16} /> Patient Medical Details & Allergies
                     </strong>
                     <span style={{ fontSize: '0.75rem', opacity: 0.8, background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>
                       Reference Only (Not saved on prescription)
@@ -299,14 +302,29 @@ export default function DoctorPrescriptions() {
                   <input value={row.dosage} placeholder="e.g. 1 tablet after meals" onChange={e => updateRow(i, 'dosage', e.target.value)} />
                 </div>
                 <div style={{ paddingTop: '1.75rem' }}>
-                  <button type="button" className="slot-btn" onClick={() => setRows(rs => rs.filter((_, idx) => idx !== i))} disabled={rows.length === 1}>Remove</button>
+                  <button
+                    type="button"
+                    className="slot-btn"
+                    onClick={() => setRows(rs => rs.filter((_, idx) => idx !== i))}
+                    disabled={rows.length === 1}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                  >
+                    <Trash2 size={14} /> Remove
+                  </button>
                 </div>
               </div>
             )
           })}
 
           <div className="appt-actions" style={{ margin: '1rem 0' }}>
-            <button type="button" className="slot-btn" onClick={() => setRows(rs => [...rs, emptyRow()])}>+ Add medicine</button>
+            <button
+              type="button"
+              className="slot-btn"
+              onClick={() => setRows(rs => [...rs, emptyRow()])}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              <Plus size={15} /> Add medicine
+            </button>
           </div>
 
           <div className="form-group">
@@ -316,8 +334,16 @@ export default function DoctorPrescriptions() {
 
           {error && <div className="alert alert-error">{error}</div>}
 
-          <button className="btn-submit" style={{ width: 'auto', marginTop: '1rem' }} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Prescription'}
+          <button
+            className="btn-submit"
+            style={{ width: 'auto', marginTop: '1rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            disabled={saving}
+          >
+            {saving ? 'Saving…' : (
+              <>
+                <Save size={16} /> Save Prescription
+              </>
+            )}
           </button>
         </form>
       </div>

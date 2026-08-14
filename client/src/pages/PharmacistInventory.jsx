@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Boxes, AlertTriangle, RotateCcw, Sliders, Plus, Check } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -129,13 +130,17 @@ export default function PharmacistInventory() {
       {/* Banner */}
       <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem', background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)' }}>
         <div>
-          <p className="dash-greeting">📦 Pharmacy Inventory</p>
+          <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Boxes size={16} /> Pharmacy Inventory
+          </p>
           <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Manage Stock Levels</h2>
           <span className="dash-badge" style={{ background: 'rgba(255, 255, 255, 0.15)' }}>
             {totalItems} Catalog Items · {lowStockItems.length} Low Stock Alerts
           </span>
         </div>
-        <div className="dash-hero-glyph">📦</div>
+        <div className="dash-hero-glyph">
+          <Boxes size={48} />
+        </div>
       </div>
 
       {/* Global error/success notifications */}
@@ -145,7 +150,9 @@ export default function PharmacistInventory() {
       {/* Low-stock warnings panel */}
       {lowStockItems.length > 0 && (
         <div className="dash-section" style={{ borderLeft: '4px solid #d97706', background: '#fffbeb', marginBottom: '1.5rem' }}>
-          <p className="dash-section-title" style={{ color: '#92400e' }}>⚠️ Urgent Low Stock Alerts</p>
+          <p className="dash-section-title" style={{ color: '#92400e', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={16} /> Urgent Low Stock Alerts
+          </p>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {lowStockItems.map(m => (
               <li key={m._id} style={{ fontSize: 'var(--fs-sm)', color: '#b45309' }}>
@@ -224,11 +231,15 @@ export default function PharmacistInventory() {
                 fontWeight: activeFormTab === 'restock' ? '600' : 'normal',
                 background: activeFormTab === 'restock' ? 'var(--bg)' : 'transparent',
                 borderColor: activeFormTab === 'restock' ? 'var(--border-strong)' : 'transparent',
-                color: activeFormTab === 'restock' ? 'var(--text)' : 'var(--text-sub)'
+                color: activeFormTab === 'restock' ? 'var(--text)' : 'var(--text-sub)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.3rem'
               }}
               onClick={() => setActiveFormTab('restock')}
             >
-              🔄 Restock
+              <RotateCcw size={13} /> Restock
             </button>
             <button
               className="slot-btn"
@@ -239,11 +250,15 @@ export default function PharmacistInventory() {
                 fontWeight: activeFormTab === 'threshold' ? '600' : 'normal',
                 background: activeFormTab === 'threshold' ? 'var(--bg)' : 'transparent',
                 borderColor: activeFormTab === 'threshold' ? 'var(--border-strong)' : 'transparent',
-                color: activeFormTab === 'threshold' ? 'var(--text)' : 'var(--text-sub)'
+                color: activeFormTab === 'threshold' ? 'var(--text)' : 'var(--text-sub)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.3rem'
               }}
               onClick={() => setActiveFormTab('threshold')}
             >
-              ⚙️ Threshold
+              <Sliders size={13} /> Threshold
             </button>
             <button
               className="slot-btn"
@@ -254,11 +269,15 @@ export default function PharmacistInventory() {
                 fontWeight: activeFormTab === 'add' ? '600' : 'normal',
                 background: activeFormTab === 'add' ? 'var(--bg)' : 'transparent',
                 borderColor: activeFormTab === 'add' ? 'var(--border-strong)' : 'transparent',
-                color: activeFormTab === 'add' ? 'var(--text)' : 'var(--text-sub)'
+                color: activeFormTab === 'add' ? 'var(--text)' : 'var(--text-sub)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.3rem'
               }}
               onClick={() => setActiveFormTab('add')}
             >
-              ➕ Add New
+              <Plus size={13} /> Add New
             </button>
           </div>
 

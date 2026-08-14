@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Share2, Copy, Check, FileText } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -35,13 +36,33 @@ function ShareBox({ prescription }) {
         <>
           <div className="rx-share-row">
             <input readOnly value={url} onFocus={e => e.target.select()} />
-            <button className="slot-btn" onClick={copy}>{copied ? 'Copied ✓' : 'Copy'}</button>
+            <button
+              className="slot-btn"
+              onClick={copy}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            >
+              {copied ? (
+                <>
+                  <Check size={14} style={{ color: '#059669' }} /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy size={14} /> Copy
+                </>
+              )}
+            </button>
           </div>
           <p className="rx-share-note">Anyone with this link can view the prescription until {fmtDate(expires)}. <button className="link-btn" onClick={generate} disabled={busy}>Regenerate</button></p>
         </>
       ) : (
-        <button className="slot-btn" onClick={generate} disabled={busy}>
-          {busy ? 'Generating…' : '🔗 Generate shareable link'}
+        <button
+          className="slot-btn"
+          onClick={generate}
+          disabled={busy}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+        >
+          <Share2 size={14} />
+          {busy ? 'Generating…' : 'Generate shareable link'}
         </button>
       )}
     </div>
@@ -61,7 +82,9 @@ export default function StudentPrescriptions() {
   return (
     <div className="dashboard">
       <div className="dash-section">
-        <p className="dash-section-title">My Prescriptions</p>
+        <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <FileText size={16} style={{ color: 'var(--accent)' }} /> My Prescriptions
+        </p>
         {loading ? (
           <p className="activity-empty">Loading…</p>
         ) : prescriptions.length === 0 ? (
