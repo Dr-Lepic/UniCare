@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Lock, X, Eye, EyeOff } from 'lucide-react'
 import api from '../api'
 
 const PasswordInput = (props) => {
@@ -9,9 +10,23 @@ const PasswordInput = (props) => {
       <button
         type="button"
         onClick={() => setShow(!show)}
-        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '1rem', padding: 0 }}
+        aria-label={show ? 'Hide password' : 'Show password'}
+        style={{
+          position: 'absolute',
+          right: '10px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'var(--muted)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0
+        }}
       >
-        {show ? '🙈' : '👁️'}
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
     </div>
   )
@@ -67,12 +82,24 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: 'var(--fs-md)', fontWeight: 700 }}>🔒 Change Password</h3>
+          <h3 style={{ fontSize: 'var(--fs-md)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Lock size={18} style={{ color: 'var(--accent)' }} /> Change Password
+          </h3>
           <button
             onClick={onClose}
-            style={{ border: 'none', background: 'none', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--muted)' }}
+            aria-label="Close modal"
+            style={{
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              color: 'var(--muted)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px'
+            }}
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 

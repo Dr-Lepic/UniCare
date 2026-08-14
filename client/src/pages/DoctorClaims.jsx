@@ -1,4 +1,15 @@
 import { useEffect, useState } from 'react'
+import {
+  Receipt,
+  ClipboardCheck,
+  Clock,
+  History,
+  FileText,
+  X,
+  CheckCircle2,
+  XCircle,
+  ExternalLink
+} from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -67,13 +78,17 @@ export default function DoctorClaims() {
       {/* Top Banner */}
       <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem' }}>
         <div>
-          <p className="dash-greeting">💰 Reimbursement Claims</p>
+          <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Receipt size={16} style={{ color: 'var(--accent)' }} /> Reimbursement Claims
+          </p>
           <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Review Queue</h2>
           <span className="dash-badge">
             {pendingClaims.length} Claim{pendingClaims.length !== 1 ? 's' : ''} require your action
           </span>
         </div>
-        <div className="dash-hero-glyph">📋</div>
+        <div className="dash-hero-glyph">
+          <ClipboardCheck size={48} />
+        </div>
       </div>
 
       {success && (
@@ -87,6 +102,9 @@ export default function DoctorClaims() {
         <button
           className="slot-btn"
           style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
             background: activeTab === 'pending' ? 'var(--accent-weak)' : 'var(--bg)',
             borderColor: activeTab === 'pending' ? 'var(--accent)' : 'var(--border-strong)',
             color: activeTab === 'pending' ? 'var(--accent)' : 'var(--text-sub)',
@@ -95,11 +113,14 @@ export default function DoctorClaims() {
           }}
           onClick={() => { setActiveTab('pending'); setReviewingClaimId(null); }}
         >
-          ⏳ Pending Review ({pendingClaims.length})
+          <Clock size={15} /> Pending Review ({pendingClaims.length})
         </button>
         <button
           className="slot-btn"
           style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
             background: activeTab === 'history' ? 'var(--accent-weak)' : 'var(--bg)',
             borderColor: activeTab === 'history' ? 'var(--accent)' : 'var(--border-strong)',
             color: activeTab === 'history' ? 'var(--accent)' : 'var(--text-sub)',
@@ -108,7 +129,7 @@ export default function DoctorClaims() {
           }}
           onClick={() => { setActiveTab('history'); setReviewingClaimId(null); }}
         >
-          📜 Review History ({historyClaims.length})
+          <History size={15} /> Review History ({historyClaims.length})
         </button>
       </div>
 
@@ -171,10 +192,10 @@ export default function DoctorClaims() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="slot-btn"
-                      style={{ padding: '0.3rem 0.6rem', fontSize: 'var(--fs-xs)', textDecoration: 'none' }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.6rem', fontSize: 'var(--fs-xs)', textDecoration: 'none' }}
                       onClick={e => e.stopPropagation()}
                     >
-                      📄 View Uploaded Bill
+                      <FileText size={14} /> View Uploaded Bill
                     </a>
                     {c.prescription && (
                       <span className="stat-label" style={{ fontSize: 'var(--fs-xs)' }}>
@@ -206,10 +227,11 @@ export default function DoctorClaims() {
                   <p className="dash-section-title" style={{ margin: 0 }}>Reviewing Claim</p>
                   <button
                     className="slot-btn"
-                    style={{ padding: '0.2rem 0.5rem', fontSize: 'var(--fs-xs)' }}
+                    style={{ padding: '0.25rem 0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--fs-xs)' }}
                     onClick={() => setReviewingClaimId(null)}
+                    aria-label="Close review panel"
                   >
-                    Close ✕
+                    Close <X size={14} />
                   </button>
                 </div>
 
@@ -235,9 +257,9 @@ export default function DoctorClaims() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-submit"
-                    style={{ background: 'var(--bg)', color: 'var(--text-sub)', borderColor: 'var(--border-strong)', textDecoration: 'none', display: 'flex', justifyContent: 'center', marginTop: '0.75rem', fontSize: 'var(--fs-sm)' }}
+                    style={{ background: 'var(--bg)', color: 'var(--text-sub)', borderColor: 'var(--border-strong)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.75rem', fontSize: 'var(--fs-sm)' }}
                   >
-                    📄 View Uploaded Bill File
+                    <FileText size={15} /> View Uploaded Bill File <ExternalLink size={13} />
                   </a>
                 </div>
 
@@ -256,19 +278,27 @@ export default function DoctorClaims() {
                 <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                   <button
                     className="btn-submit"
-                    style={{ background: '#0d9488', borderColor: '#0d9488', flex: 1 }}
+                    style={{ background: '#0d9488', borderColor: '#0d9488', flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
                     disabled={submitting}
                     onClick={() => handleReview(reviewingClaimId, 'approved')}
                   >
-                    {submitting ? 'Processing…' : '✅ Approve Claim'}
+                    {submitting ? 'Processing…' : (
+                      <>
+                        <CheckCircle2 size={16} /> Approve Claim
+                      </>
+                    )}
                   </button>
                   <button
                     className="btn-submit"
-                    style={{ background: '#b91c1c', borderColor: '#b91c1c', flex: 1 }}
+                    style={{ background: '#b91c1c', borderColor: '#b91c1c', flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
                     disabled={submitting}
                     onClick={() => handleReview(reviewingClaimId, 'rejected')}
                   >
-                    {submitting ? 'Processing…' : '❌ Reject Claim'}
+                    {submitting ? 'Processing…' : (
+                      <>
+                        <XCircle size={16} /> Reject Claim
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

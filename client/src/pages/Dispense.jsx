@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckCircle2, AlertTriangle, Check, KeyRound, ArrowRight, PackageCheck } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -68,19 +69,21 @@ export default function Dispense() {
   return (
     <div className="dashboard">
       <div className="dash-section">
-        <p className="dash-section-title">Verify OTP & Dispense Medicine</p>
+        <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <KeyRound size={16} style={{ color: 'var(--accent)' }} /> Verify OTP & Dispense Medicine
+        </p>
 
         {error && <div className="alert alert-error" style={{ marginBottom: '1.5rem' }}>{error}</div>}
 
         {success && (
-          <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+          <div style={{ textAlign: 'center', padding: '2rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <CheckCircle2 size={56} style={{ color: '#059669', marginBottom: '1rem' }} />
             <h3>Medicines Dispensed Successfully!</h3>
             <p className="role-info-name" style={{ margin: '0.5rem 0 1.5rem' }}>
               The stock levels have been decremented and the OTP marked as used.
             </p>
-            <button className="btn-submit" onClick={handleReset} style={{ maxWidth: '240px', margin: '0 auto' }}>
-              Verify Another OTP
+            <button className="btn-submit" onClick={handleReset} style={{ maxWidth: '240px', margin: '0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+              <KeyRound size={16} /> Verify Another OTP
             </button>
           </div>
         )}
@@ -101,8 +104,12 @@ export default function Dispense() {
                 disabled={loading}
               />
             </div>
-            <button type="submit" className="btn-submit" disabled={loading || code.length !== 6}>
-              {loading ? 'Verifying OTP…' : 'Verify OTP →'}
+            <button type="submit" className="btn-submit" disabled={loading || code.length !== 6} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+              {loading ? 'Verifying OTP…' : (
+                <>
+                  <KeyRound size={16} /> Verify OTP <ArrowRight size={16} />
+                </>
+              )}
             </button>
           </form>
         )}
@@ -138,8 +145,16 @@ export default function Dispense() {
                         </div>
                         <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
                           <span style={{ fontWeight: '600' }}>Qty: {m.qty} {m.medicine?.unit || 'unit'}</span>
-                          <span style={{ fontSize: '0.8rem', color: isOutOfStock ? '#b91c1c' : '#047857', fontWeight: '500' }}>
-                            {isOutOfStock ? `⚠️ Insufficient stock (${m.medicine?.stockQty || 0} left)` : `✓ In stock (${m.medicine?.stockQty || 0} left)`}
+                          <span style={{ fontSize: '0.8rem', color: isOutOfStock ? '#b91c1c' : '#047857', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                            {isOutOfStock ? (
+                              <>
+                                <AlertTriangle size={13} /> Insufficient stock ({m.medicine?.stockQty || 0} left)
+                              </>
+                            ) : (
+                              <>
+                                <Check size={13} /> In stock ({m.medicine?.stockQty || 0} left)
+                              </>
+                            )}
                           </span>
                         </div>
                       </li>
@@ -163,15 +178,16 @@ export default function Dispense() {
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button className="slot-btn" onClick={handleReset} disabled={dispenseLoading} style={{ flex: 1 }}>
+                <button className="slot-btn" onClick={handleReset} disabled={dispenseLoading} style={{ flex: 1, justifyContent: 'center' }}>
                   Cancel
                 </button>
                 <button
                   className="btn-submit"
                   onClick={handleDispense}
                   disabled={dispenseLoading || hasStockIssues}
-                  style={{ flex: 2, margin: '0' }}
+                  style={{ flex: 2, margin: '0', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
                 >
+                  <PackageCheck size={18} />
                   {dispenseLoading ? 'Dispensing...' : 'Confirm Dispense & Decrement Stock'}
                 </button>
               </div>

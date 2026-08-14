@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { HeartPulse } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -29,7 +30,9 @@ export default function SharedPrescription() {
     <div className="share-page">
       <div className="share-card">
         <div className="share-brand">
-          <span className="share-brand-icon">🏥</span>
+          <span className="share-brand-icon">
+            <HeartPulse size={18} />
+          </span>
           <span>UniCare</span>
         </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { HeartPulse, Lock, Info, Save } from 'lucide-react'
 import api from '../api'
 
 export default function StudentMedicalDetails() {
@@ -42,13 +43,17 @@ export default function StudentMedicalDetails() {
     <div className="dashboard">
       <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem' }}>
         <div>
-          <p className="dash-greeting">🩺 Student Health Record</p>
+          <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <HeartPulse size={16} style={{ color: 'var(--accent)' }} /> Student Health Record
+          </p>
           <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Medical Profile & Allergies</h2>
-          <span className="dash-badge">
-            🔒 Base64 Encoded in DB · Confidential (Doctor & You Only)
+          <span className="dash-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <Lock size={12} /> Base64 Encoded in DB · Confidential (Doctor & You Only)
           </span>
         </div>
-        <div className="dash-hero-glyph">🩺</div>
+        <div className="dash-hero-glyph">
+          <HeartPulse size={48} />
+        </div>
       </div>
 
       <div className="dash-section" style={{ maxWidth: '800px' }}>
@@ -77,13 +82,23 @@ export default function StudentMedicalDetails() {
                 onChange={e => setMedicalDetails(e.target.value)}
                 style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontFamily: 'inherit' }}
               />
-              <span className="stat-label" style={{ display: 'block', marginTop: '0.5rem', fontSize: '0.85rem' }}>
-                ℹ️ Note: These details are saved in the system in encoded format. Your attending doctor will see these details while writing your prescription for safety checks, but they will not be printed on your prescription document.
+              <span className="stat-label" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.35rem', marginTop: '0.5rem', fontSize: '0.85rem' }}>
+                <Info size={15} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>Note: These details are saved in the system in encoded format. Your attending doctor will see these details while writing your prescription for safety checks, but they will not be printed on your prescription document.</span>
               </span>
             </div>
 
-            <button type="submit" className="btn-submit" style={{ width: 'auto', marginTop: '1rem' }} disabled={saving}>
-              {saving ? 'Saving…' : 'Save Medical Profile'}
+            <button
+              type="submit"
+              className="btn-submit"
+              style={{ width: 'auto', marginTop: '1rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+              disabled={saving}
+            >
+              {saving ? 'Saving…' : (
+                <>
+                  <Save size={16} /> Save Medical Profile
+                </>
+              )}
             </button>
           </form>
         )}

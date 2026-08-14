@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Receipt, FlaskConical, AlertTriangle, FileText, ExternalLink, PlusCircle } from 'lucide-react'
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
@@ -101,20 +102,26 @@ export default function StudentReimbursements() {
       {/* Top Banner with Stats */}
       <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem' }}>
         <div>
-          <p className="dash-greeting">💰 Reimbursements Portal</p>
+          <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Receipt size={16} style={{ color: 'var(--accent)' }} /> Reimbursements Portal
+          </p>
           <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Track & Submit Claims</h2>
           <span className="dash-badge">
             {pendingCount} Pending Claim{pendingCount !== 1 ? 's' : ''} under review
           </span>
         </div>
-        <div className="dash-hero-glyph">💰</div>
+        <div className="dash-hero-glyph">
+          <Receipt size={48} />
+        </div>
       </div>
 
       <div className="dash-bottom" style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1fr) 2fr', gap: '1.5rem', alignItems: 'start' }}>
         
         {/* Form panel */}
         <div className="dash-section">
-          <p className="dash-section-title">New Reimbursement Claim</p>
+          <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <PlusCircle size={15} style={{ color: 'var(--accent)' }} /> New Reimbursement Claim
+          </p>
           
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
             {submitError && <div className="alert alert-error">{submitError}</div>}
@@ -133,7 +140,7 @@ export default function StudentReimbursements() {
                   const hasTests = Boolean(p.tests && p.tests.trim())
                   return (
                     <option key={p._id} value={p._id}>
-                      {fmtDate(p.createdAt)} — {p.doctor?.name} {hasTests ? `🧪 [Tests: ${p.tests}]` : `❌ [No Tests - Ineligible]`}
+                      {fmtDate(p.createdAt)} — {p.doctor?.name} {hasTests ? `[Tests: ${p.tests}]` : `[No Tests - Ineligible]`}
                     </option>
                   )
                 })}
@@ -147,12 +154,12 @@ export default function StudentReimbursements() {
                 <p className="stat-label" style={{ margin: 0 }}>{selectedPrescription.doctor?.specialty || 'General Physician'}</p>
                 
                 {selectedPrescription.tests && selectedPrescription.tests.trim() ? (
-                  <div style={{ marginTop: '0.5rem', color: '#059669', fontSize: '0.85rem' }}>
-                    🧪 <strong>Recommended Tests:</strong> {selectedPrescription.tests}
+                  <div style={{ marginTop: '0.5rem', color: '#059669', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <FlaskConical size={15} /> <strong>Recommended Tests:</strong> {selectedPrescription.tests}
                   </div>
                 ) : (
-                  <div style={{ marginTop: '0.5rem', color: '#dc2626', fontSize: '0.85rem', fontWeight: 500 }}>
-                    ⚠️ No recommended lab tests on this prescription. Ineligible for reimbursement claim.
+                  <div style={{ marginTop: '0.5rem', color: '#dc2626', fontSize: '0.85rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <AlertTriangle size={15} /> No recommended lab tests on this prescription. Ineligible for reimbursement claim.
                   </div>
                 )}
               </div>
@@ -236,9 +243,9 @@ export default function StudentReimbursements() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="slot-btn"
-                      style={{ padding: '0.3rem 0.6rem', fontSize: 'var(--fs-xs)', textDecoration: 'none' }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.6rem', fontSize: 'var(--fs-xs)', textDecoration: 'none' }}
                     >
-                      📄 View Uploaded Bill
+                      <FileText size={14} /> View Uploaded Bill <ExternalLink size={12} />
                     </a>
                     {c.prescription && (
                       <span className="stat-label" style={{ fontSize: 'var(--fs-xs)' }}>

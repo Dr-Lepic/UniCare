@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Calendar, User, Trash2 } from 'lucide-react'
 import api from '../api'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
@@ -48,7 +49,9 @@ export default function StudentAppointments() {
   return (
     <div className="dashboard">
       <div className="dash-section">
-        <p className="dash-section-title">Browse Doctors</p>
+        <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <User size={16} style={{ color: 'var(--accent)' }} /> Browse Doctors
+        </p>
         <div className="doctor-grid">
           {doctors.map(d => (
             <div
@@ -65,7 +68,9 @@ export default function StudentAppointments() {
 
       {selectedDoctor && (
         <div className="dash-section">
-          <p className="dash-section-title">Book with {selectedDoctor.name}</p>
+          <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Calendar size={16} style={{ color: 'var(--accent)' }} /> Book with {selectedDoctor.name}
+          </p>
           <div className="form-group">
             <label htmlFor="date">Date</label>
             <input id="date" type="date" min={todayStr()} value={date} onChange={e => setDate(e.target.value)} />
@@ -85,7 +90,9 @@ export default function StudentAppointments() {
       )}
 
       <div className="dash-section">
-        <p className="dash-section-title">My Appointments</p>
+        <p className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Calendar size={16} style={{ color: 'var(--accent)' }} /> My Appointments
+        </p>
         {myAppointments.length === 0 ? (
           <p className="activity-empty">No appointments yet.</p>
         ) : (
@@ -97,7 +104,13 @@ export default function StudentAppointments() {
               <div className="appt-actions">
                 <span className={`status-pill status-pill--${a.status}`}>{a.status}</span>
                 {(a.status === 'pending' || a.status === 'confirmed') && (
-                  <button className="slot-btn" onClick={() => handleCancel(a._id)}>Cancel</button>
+                  <button
+                    className="slot-btn"
+                    onClick={() => handleCancel(a._id)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  >
+                    <Trash2 size={13} /> Cancel
+                  </button>
                 )}
               </div>
             </div>

@@ -1,5 +1,18 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
+import {
+  HeartPulse,
+  Calendar,
+  Pill,
+  Share2,
+  Receipt,
+  Eye,
+  EyeOff,
+  Lock,
+  ArrowRight,
+  Send,
+  KeyRound
+} from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api'
 
@@ -11,9 +24,23 @@ const PasswordInput = (props) => {
       <button
         type="button"
         onClick={() => setShow(!show)}
-        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '1rem', padding: 0 }}
+        aria-label={show ? 'Hide password' : 'Show password'}
+        style={{
+          position: 'absolute',
+          right: '10px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'var(--muted)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0
+        }}
       >
-        {show ? '🙈' : '👁️'}
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
     </div>
   )
@@ -99,13 +126,22 @@ export default function Login() {
     }
   }
 
+  const features = [
+    { icon: Calendar, text: 'Book appointments with campus doctors' },
+    { icon: Pill, text: 'E-prescriptions & medicine dispensing' },
+    { icon: Share2, text: 'Shareable prescription links' },
+    { icon: Receipt, text: 'Reimbursement claim tracking' },
+  ]
+
   return (
     <div className="login-page">
 
       {/* ── Left brand panel ── */}
       <div className="login-left">
         <div className="brand-mark">
-          <div className="brand-mark-icon">🏥</div>
+          <div className="brand-mark-icon">
+            <HeartPulse size={26} />
+          </div>
           <div>
             <h1>UniCare</h1>
             <p>University Medical Center</p>
@@ -118,14 +154,11 @@ export default function Login() {
         </p>
 
         <ul className="login-features">
-          {[
-            ['📅', 'Book appointments with campus doctors'],
-            ['💊', 'E-prescriptions & medicine dispensing'],
-            ['🔗', 'Shareable prescription links'],
-            ['💰', 'Reimbursement claim tracking'],
-          ].map(([icon, text]) => (
+          {features.map(({ icon: Icon, text }) => (
             <li key={text}>
-              <span className="feat-dot">{icon}</span>
+              <span className="feat-dot">
+                <Icon size={16} />
+              </span>
               {text}
             </li>
           ))}
@@ -136,7 +169,15 @@ export default function Login() {
       <div className="login-right">
         <div className="login-card">
           <div className="login-card-header">
-            <h2>{forgotPassMode ? 'Reset Password 🔒' : 'Welcome back 👋'}</h2>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {forgotPassMode ? (
+                <>
+                  <Lock size={22} style={{ color: 'var(--accent)' }} /> Reset Password
+                </>
+              ) : (
+                'Welcome back'
+              )}
+            </h2>
             <p>{forgotPassMode ? 'Follow the steps to reset your password' : 'Sign in to your UniCare portal'}</p>
           </div>
 
@@ -174,7 +215,11 @@ export default function Login() {
                 />
               </div>
               <button type="submit" className="btn-submit" disabled={loading}>
-                {loading ? 'Signing in…' : 'Sign In →'}
+                {loading ? 'Signing in…' : (
+                  <>
+                    Sign In <ArrowRight size={16} />
+                  </>
+                )}
               </button>
             </form>
           ) : (
@@ -192,7 +237,11 @@ export default function Login() {
                   />
                 </div>
                 <button type="submit" className="btn-submit" disabled={loading}>
-                  {loading ? 'Sending OTP…' : 'Send OTP'}
+                  {loading ? 'Sending OTP…' : (
+                    <>
+                      <Send size={16} /> Send OTP
+                    </>
+                  )}
                 </button>
                 <button type="button" className="link-btn" style={{ display: 'block', margin: '1rem auto 0', fontWeight: 'normal' }} onClick={() => setForgotPassMode(false)}>
                   Back to login
@@ -232,7 +281,11 @@ export default function Login() {
                   />
                 </div>
                 <button type="submit" className="btn-submit" disabled={loading}>
-                  {loading ? 'Resetting…' : 'Reset Password'}
+                  {loading ? 'Resetting…' : (
+                    <>
+                      <KeyRound size={16} /> Reset Password
+                    </>
+                  )}
                 </button>
                 <button type="button" className="link-btn" style={{ display: 'block', margin: '1rem auto 0', fontWeight: 'normal' }} onClick={() => { setFpStep('email'); setError(''); setSuccess('') }}>
                   Back to email step
