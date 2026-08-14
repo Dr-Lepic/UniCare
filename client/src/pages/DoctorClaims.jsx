@@ -13,7 +13,7 @@ import {
 import api from '../api'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-const backendUrl = 'http://localhost:5000'
+const backendUrl = 'http://localhost:5001'
 
 export default function DoctorClaims() {
   const [claims, setClaims]         = useState([])

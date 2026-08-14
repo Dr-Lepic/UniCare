@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Hospital,
@@ -16,104 +17,216 @@ import {
   GraduationCap,
   Activity,
   Settings,
-  HeartPulse
+  HeartPulse,
+  Clock
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import api from '../api'
 
-// Role-specific dashboard content
-const ROLE_DATA = {
-  student: {
-    gradient: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
-    accent:   '#3b82f6',
-    stats: [
-      { icon: Hospital, value: 3,  label: 'Total Visits' },
-      { icon: Calendar, value: 2,  label: 'Upcoming Appointments' },
-      { icon: Pill, value: 1,  label: 'Active Prescriptions' },
-      { icon: Receipt, value: 0,  label: 'Pending Claims' },
-    ],
-    actions: [
-      { icon: Calendar, label: 'Book Appointment',   to: 'appointments' },
-      { icon: FileText, label: 'View Prescriptions',  to: 'prescriptions' },
-      { icon: Share2, label: 'Share Sick Leave',    to: 'prescriptions' },
-      { icon: Receipt, label: 'Submit Claim',        to: 'reimbursements' },
-    ],
-    activity: [
-      'Appointment confirmed — Dr. Mahbub, Jul 5',
-      'Prescription #PRX-001 issued — Jul 1',
-      'Reimbursement claim submitted — Jun 28',
-    ],
-  },
+const fmtDate = (d) => {
+  if (!d) return ''
+  const date = new Date(d)
+  return isNaN(date.getTime()) ? '' : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+}
 
-  doctor: {
-    gradient: 'linear-gradient(135deg, #0f766e 0%, #0d9488 100%)',
-    accent:   '#0d9488',
-    stats: [
-      { icon: Calendar, value: 8,   label: "Today's Appointments" },
-      { icon: Users, value: 145, label: 'Total Patients' },
-      { icon: FileText, value: 23,  label: 'Prescriptions Written' },
-      { icon: Receipt, value: 3,   label: 'Claims to Review' },
-    ],
-    actions: [
-      { icon: Calendar, label: 'View Appointment Queue', to: 'appointments' },
-      { icon: PenSquare, label: 'Write Prescription',     to: 'prescriptions' },
-      { icon: Receipt, label: 'Review Reimbursements',  to: 'claims' },
-    ],
-    activity: [
-      'Consulted Student #STU-036 — Jul 5, 10:30 AM',
-      'Prescription #PRX-023 written for Paracetamol — Jul 4',
-      'Reimbursement claim #RC-07 approved — Jul 3',
-    ],
-  },
-
-  pharmacist: {
-    gradient: 'linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%)',
-    accent:   '#7c3aed',
-    stats: [
-      { icon: KeyRound, value: 5,  label: 'OTPs Pending' },
-      { icon: Pill, value: 12, label: 'Dispensed Today' },
-      { icon: AlertTriangle, value: 3,  label: 'Low Stock Items' },
-      { icon: Boxes, value: 48, label: 'Total Medicines' },
-    ],
-    actions: [
-      { icon: KeyRound, label: 'Verify OTP',         to: 'dispense' },
-      { icon: Boxes, label: 'Check Inventory',    tag: 'M7' },
-      { icon: RotateCcw, label: 'Log Restock Entry',  tag: 'M7' },
-    ],
-    activity: [
-      'OTP verified — STU-036, Paracetamol ×10 — Jul 5',
-      'Stock restocked: Amoxicillin +200 units — Jul 4',
-      'Low-stock alert: Ibuprofen (8 left) — Jul 3',
-    ],
-  },
-
-  admin: {
-    gradient: 'linear-gradient(135deg, #b45309 0%, #d97706 100%)',
-    accent:   '#d97706',
-    stats: [
-      { icon: Users, value: 198, label: 'Total Users' },
-      { icon: Stethoscope, value: 12, label: 'Doctors' },
-      { icon: GraduationCap, value: 184, label: 'Students' },
-      { icon: Pill, value: 2,   label: 'Pharmacists' },
-    ],
-    actions: [
-      { icon: Users, label: 'Manage Users',       tag: 'M8' },
-      { icon: Activity, label: 'View System Logs',   tag: 'M8' },
-      { icon: Settings, label: 'Inventory Settings', tag: 'M7' },
-    ],
-    activity: [
-      'New user registered: Dr. Sarah Hossain — Jul 6',
-      'System backup completed — Jul 5, 03:00 AM',
-      'Password reset: student@unicare.edu — Jul 4',
-    ],
-  },
+const ACTION_CONFIG = {
+  student: [
+    { icon: Calendar, label: 'Book Appointment',   to: 'appointments' },
+    { icon: FileText, label: 'View Prescriptions',  to: 'prescriptions' },
+    { icon: Share2, label: 'Share Sick Leave',    to: 'prescriptions' },
+    { icon: Receipt, label: 'Submit Claim',        to: 'reimbursements' },
+  ],
+  doctor: [
+    { icon: Calendar, label: 'View Appointment Queue', to: 'appointments' },
+    { icon: PenSquare, label: 'Write Prescription',     to: 'prescriptions' },
+    { icon: Receipt, label: 'Review Reimbursements',  to: 'claims' },
+  ],
+  pharmacist: [
+    { icon: KeyRound, label: 'Verify OTP',         to: 'dispense' },
+    { icon: Boxes, label: 'Check Inventory',    to: 'inventory' },
+    { icon: RotateCcw, label: 'Log Restock Entry',  to: 'restock-log' },
+  ],
+  admin: [
+    { icon: Users, label: 'Manage Users',       tag: 'M8' },
+    { icon: Activity, label: 'View System Logs',   tag: 'M8' },
+    { icon: Settings, label: 'Inventory Settings', to: 'inventory' },
+  ],
 }
 
 export default function Dashboard() {
   const { user }   = useAuth()
   const navigate   = useNavigate()
   const role       = user?.role || 'student'
-  const data       = ROLE_DATA[role] ?? ROLE_DATA.student
   const firstName  = user?.name?.split(' ')[0] ?? 'User'
+
+  const [loading, setLoading]   = useState(true)
+  const [stats, setStats]       = useState([])
+  const [activity, setActivity] = useState([])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchDashboardData = async () => {
+      setLoading(true)
+      try {
+        if (role === 'student') {
+          const [apptsRes, rxRes, claimsRes] = await Promise.allSettled([
+            api.get('/appointments/mine'),
+            api.get('/prescriptions/mine'),
+            api.get('/reimbursements/mine'),
+          ])
+
+          const appts = apptsRes.status === 'fulfilled' ? apptsRes.value.data : []
+          const rxList = rxRes.status === 'fulfilled' ? rxRes.value.data : []
+          const claims = claimsRes.status === 'fulfilled' ? claimsRes.value.data : []
+
+          const todayStr = new Date().toISOString().slice(0, 10)
+          const totalVisits = appts.filter(a => a.status === 'completed').length || rxList.length
+          const upcomingAppts = appts.filter(a => (a.status === 'pending' || a.status === 'confirmed') && new Date(a.date).toISOString().slice(0, 10) >= todayStr).length
+          const activeRx = rxList.filter(p => p.status !== 'dispensed').length
+          const pendingClaims = claims.filter(c => c.status === 'pending').length
+
+          if (isMounted) {
+            setStats([
+              { icon: Hospital, value: totalVisits, label: 'Total Visits' },
+              { icon: Calendar, value: upcomingAppts, label: 'Upcoming Appointments' },
+              { icon: Pill, value: activeRx, label: 'Active Prescriptions' },
+              { icon: Receipt, value: pendingClaims, label: 'Pending Claims' },
+            ])
+
+            // Combine recent activity
+            const act = []
+            appts.forEach(a => {
+              act.push({
+                text: `Appointment (${a.status}) with Dr. ${a.doctor?.name || 'Doctor'} — ${fmtDate(a.date)}`,
+                time: new Date(a.createdAt || a.date).getTime()
+              })
+            })
+            rxList.forEach(p => {
+              act.push({
+                text: `Prescription issued by Dr. ${p.doctor?.name || 'Doctor'} — ${fmtDate(p.createdAt)}`,
+                time: new Date(p.createdAt).getTime()
+              })
+            })
+            claims.forEach(c => {
+              act.push({
+                text: `Claim (${c.status}) for ${c.hospitalName} (${c.amount} BDT) — ${fmtDate(c.createdAt)}`,
+                time: new Date(c.createdAt).getTime()
+              })
+            })
+
+            act.sort((a, b) => b.time - a.time)
+            setActivity(act.slice(0, 5).map(x => x.text))
+          }
+        } else if (role === 'doctor') {
+          const [apptsRes, rxRes, claimsRes, studentsRes] = await Promise.allSettled([
+            api.get('/appointments/mine'),
+            api.get('/prescriptions/mine'),
+            api.get('/reimbursements/mine'),
+            api.get('/students'),
+          ])
+
+          const appts = apptsRes.status === 'fulfilled' ? apptsRes.value.data : []
+          const rxList = rxRes.status === 'fulfilled' ? rxRes.value.data : []
+          const claims = claimsRes.status === 'fulfilled' ? claimsRes.value.data : []
+          const students = studentsRes.status === 'fulfilled' ? studentsRes.value.data : []
+
+          const todayStr = new Date().toISOString().slice(0, 10)
+          const todayAppts = appts.filter(a => new Date(a.date).toISOString().slice(0, 10) === todayStr && a.status !== 'cancelled').length
+          const totalPatients = students.length || new Set(appts.map(a => a.student?._id || a.student)).size
+          const rxWritten = rxList.length
+          const claimsToReview = claims.filter(c => c.status === 'pending').length
+
+          if (isMounted) {
+            setStats([
+              { icon: Calendar, value: todayAppts, label: "Today's Appointments" },
+              { icon: Users, value: totalPatients, label: 'Total Patients' },
+              { icon: FileText, value: rxWritten, label: 'Prescriptions Written' },
+              { icon: Receipt, value: claimsToReview, label: 'Claims to Review' },
+            ])
+
+            // Combine doctor activity
+            const act = []
+            appts.forEach(a => {
+              act.push({
+                text: `Appointment (${a.status}) — ${a.student?.name || 'Student'} (${a.timeSlot}), ${fmtDate(a.date)}`,
+                time: new Date(a.createdAt || a.date).getTime()
+              })
+            })
+            rxList.forEach(p => {
+              act.push({
+                text: `Prescription issued for ${p.student?.name || 'Student'} — ${fmtDate(p.createdAt)}`,
+                time: new Date(p.createdAt).getTime()
+              })
+            })
+            claims.forEach(c => {
+              act.push({
+                text: `Claim (${c.status}) from ${c.student?.name || 'Student'} — ${fmtDate(c.createdAt)}`,
+                time: new Date(c.createdAt).getTime()
+              })
+            })
+
+            act.sort((a, b) => b.time - a.time)
+            setActivity(act.slice(0, 5).map(x => x.text))
+          }
+        } else if (role === 'pharmacist') {
+          const [medsRes, logsRes] = await Promise.allSettled([
+            api.get('/medicines'),
+            api.get('/medicines/logs'),
+          ])
+
+          const meds = medsRes.status === 'fulfilled' ? medsRes.value.data : []
+          const logs = logsRes.status === 'fulfilled' ? logsRes.value.data : []
+
+          const todayStr = new Date().toISOString().slice(0, 10)
+          const lowStock = meds.filter(m => m.stockQty <= m.reorderThreshold).length
+          const totalMeds = meds.length
+          const dispensedToday = logs.filter(l => l.reason === 'dispensed' && new Date(l.timestamp).toISOString().slice(0, 10) === todayStr).length
+          const totalLogs = logs.length
+
+          if (isMounted) {
+            setStats([
+              { icon: RotateCcw, value: totalLogs, label: 'Inventory Actions' },
+              { icon: Pill, value: dispensedToday, label: 'Dispensed Today' },
+              { icon: AlertTriangle, value: lowStock, label: 'Low Stock Alerts' },
+              { icon: Boxes, value: totalMeds, label: 'Total Medicines' },
+            ])
+
+            const act = logs.map(l => ({
+              text: `${l.reason === 'restocked' ? 'Stock restocked' : 'Dispensed'}: ${l.medicine?.name || 'Item'} (${l.changeQty > 0 ? '+' : ''}${l.changeQty} ${l.medicine?.unit || 'unit'}s) — ${fmtDate(l.timestamp)}`,
+              time: new Date(l.timestamp).getTime()
+            }))
+
+            act.sort((a, b) => b.time - a.time)
+            setActivity(act.slice(0, 5).map(x => x.text))
+          }
+        } else if (role === 'admin') {
+          // Admin fallback (backend user management API scheduled for M8)
+          if (isMounted) {
+            setStats([
+              { icon: Users, value: 0, label: 'Total Users' },
+              { icon: Stethoscope, value: 0, label: 'Doctors' },
+              { icon: GraduationCap, value: 0, label: 'Students' },
+              { icon: Pill, value: 0, label: 'Pharmacists' },
+            ])
+            setActivity([])
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard data', err)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [role])
+
+  const actions = ACTION_CONFIG[role] ?? ACTION_CONFIG.student
 
   return (
     <div className="dashboard">
@@ -134,14 +247,14 @@ export default function Dashboard() {
 
       {/* Stats */}
       <div className="stats-grid">
-        {data.stats.map((s, i) => {
+        {stats.map((s, i) => {
           const StatIcon = s.icon
           return (
             <div key={i} className="stat-card">
               <span className="stat-icon">
                 <StatIcon size={22} />
               </span>
-              <p className="stat-value">{s.value}</p>
+              <p className="stat-value">{loading ? '…' : s.value}</p>
               <p className="stat-label">{s.label}</p>
             </div>
           )
@@ -154,7 +267,7 @@ export default function Dashboard() {
         <div className="dash-section">
           <p className="dash-section-title">Quick Actions</p>
           <div className="actions-list">
-            {data.actions.map((a, i) => {
+            {actions.map((a, i) => {
               const ActionIcon = a.icon
               return (
                 <button
@@ -177,9 +290,11 @@ export default function Dashboard() {
 
         <div className="dash-section">
           <p className="dash-section-title">Recent Activity</p>
-          {data.activity.length ? (
+          {loading ? (
+            <p className="activity-empty">Loading latest activity…</p>
+          ) : activity.length ? (
             <ul className="activity-list">
-              {data.activity.map((item, i) => (
+              {activity.map((item, i) => (
                 <li key={i} className="activity-item">
                   <span className="activity-dot" />
                   {item}
