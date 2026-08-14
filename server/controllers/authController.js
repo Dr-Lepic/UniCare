@@ -1,6 +1,7 @@
 const jwt    = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User   = require('../models/User')
+const { logSystemEvent } = require('../utils/systemLogger')
 
 const sign    = (u) => jwt.sign({ id: u._id, role: u.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
 const safeUser = (u) => ({ id: u._id, name: u.name, email: u.email, role: u.role })
@@ -17,6 +18,15 @@ const register = async (req, res, next) => {
 
     const hash = await bcrypt.hash(password, 10)
     const user = await User.create({ name, email, password: hash, role, studentId, department, specialty, station })
+
+    await logSystemEvent({
+      action: 'user_created',
+      category: 'auth',
+      details: `User registered: ${user.name} (${user.role})`,
+      performedBy: user._id,
+      targetUser: user._id
+    })
+
     res.status(201).json({ token: sign(user), user: safeUser(user) })
   } catch (err) { next(err) }
 }
@@ -31,6 +41,14 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email })
     if (!user || !(await bcrypt.compare(password, user.password)))
       return res.status(401).json({ message: 'Invalid email or password' })
+
+    await logSystemEvent({
+      action: 'login',
+      category: 'auth',
+      details: `${user.name} (${user.role}) signed in to portal`,
+      performedBy: user._id,
+      targetUser: user._id
+    })
 
     res.json({ token: sign(user), user: safeUser(user) })
   } catch (err) { next(err) }

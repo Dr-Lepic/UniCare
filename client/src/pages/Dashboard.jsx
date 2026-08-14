@@ -47,8 +47,8 @@ const ACTION_CONFIG = {
     { icon: RotateCcw, label: 'Log Restock Entry',  to: 'restock-log' },
   ],
   admin: [
-    { icon: Users, label: 'Manage Users',       tag: 'M8' },
-    { icon: Activity, label: 'View System Logs',   tag: 'M8' },
+    { icon: Users, label: 'Manage Users', to: 'users' },
+    { icon: Activity, label: 'View System Logs', to: 'logs' },
     { icon: Settings, label: 'Inventory Settings', to: 'inventory' },
   ],
 }
@@ -201,15 +201,22 @@ export default function Dashboard() {
             setActivity(act.slice(0, 5).map(x => x.text))
           }
         } else if (role === 'admin') {
-          // Admin fallback (backend user management API scheduled for M8)
+          const statsRes = await api.get('/admin/stats')
+          const data = statsRes.data
+
           if (isMounted) {
             setStats([
-              { icon: Users, value: 0, label: 'Total Users' },
-              { icon: Stethoscope, value: 0, label: 'Doctors' },
-              { icon: GraduationCap, value: 0, label: 'Students' },
-              { icon: Pill, value: 0, label: 'Pharmacists' },
+              { icon: Users, value: data.users?.total ?? 0, label: 'Total Users' },
+              { icon: Stethoscope, value: data.users?.doctors ?? 0, label: 'Doctors' },
+              { icon: GraduationCap, value: data.users?.students ?? 0, label: 'Students' },
+              { icon: Pill, value: data.users?.pharmacists ?? 0, label: 'Pharmacists' },
             ])
-            setActivity([])
+
+            const act = (data.recentActivity || []).map(l => (
+              `${l.details} — ${fmtDate(l.timestamp)}`
+            ))
+
+            setActivity(act)
           }
         }
       } catch (err) {

@@ -12,6 +12,8 @@ import StudentMedicalDetails from './pages/StudentMedicalDetails'
 import DoctorClaims   from './pages/DoctorClaims'
 import PharmacistInventory from './pages/PharmacistInventory'
 import PharmacistRestockLog from './pages/PharmacistRestockLog'
+import AdminUsers     from './pages/AdminUsers'
+import AdminSystemLogs from './pages/AdminSystemLogs'
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
         <Route path="claims" element={<DoctorClaims />} />
         <Route path="inventory" element={<PharmacistInventory />} />
         <Route path="restock-log" element={<PharmacistRestockLog />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="logs" element={<AdminSystemLogs />} />
       </Route>
 
       {/* Catch-all */}

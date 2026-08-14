@@ -1,5 +1,6 @@
 const User        = require('../models/User')
 const Appointment = require('../models/Appointment')
+const { logSystemEvent } = require('../utils/systemLogger')
 
 const ACTIVE_STATUSES = ['pending', 'confirmed', 'completed']
 
@@ -75,6 +76,14 @@ const book = async (req, res, next) => {
       throw err
     }
 
+    await logSystemEvent({
+      action: 'appointment_created',
+      category: 'clinical',
+      details: `Appointment booked with Dr. ${doctor.name} for slot ${timeSlot} on ${date}`,
+      performedBy: req.user.id,
+      targetUser: doctor._id
+    })
+
     res.status(201).json(appointment)
   } catch (err) { next(err) }
 }
@@ -111,8 +120,18 @@ const updateStatus = async (req, res, next) => {
     if (!allowed.includes(status))
       return res.status(400).json({ message: `Cannot transition from ${appointment.status} to ${status}` })
 
+    const oldStatus = appointment.status
     appointment.status = status
     await appointment.save()
+
+    await logSystemEvent({
+      action: 'appointment_status_changed',
+      category: 'clinical',
+      details: `Appointment status updated from '${oldStatus}' to '${status}' by ${req.user.role}`,
+      performedBy: req.user.id,
+      targetUser: req.user.role === 'doctor' ? appointment.student : appointment.doctor
+    })
+
     res.json(appointment)
   } catch (err) { next(err) }
 }

@@ -5,6 +5,7 @@ const Prescription = require('../models/Prescription')
 const OTP          = require('../models/OTP')
 const InventoryLog = require('../models/InventoryLog')
 const { sendOTPEmail } = require('../utils/mailer')
+const { logSystemEvent } = require('../utils/systemLogger')
 
 const SHARE_TTL_DAYS = 30
 
@@ -91,6 +92,14 @@ const create = async (req, res, next) => {
       unit: m.medicine?.unit
     }))
     sendOTPEmail(student.email, student.name, code, medicinesDetails)
+
+    await logSystemEvent({
+      action: 'prescription_created',
+      category: 'clinical',
+      details: `Prescription issued for student ${student.name} (${student.studentId || ''}) by Dr. ${req.user.name || 'Doctor'}`,
+      performedBy: req.user.id,
+      targetUser: student._id
+    })
 
     res.status(201).json(populated)
   } catch (err) { next(err) }
@@ -214,6 +223,14 @@ const dispensePrescription = async (req, res, next) => {
 
     prescription.status = 'dispensed'
     await prescription.save()
+
+    await logSystemEvent({
+      action: 'prescription_dispensed',
+      category: 'pharmacy',
+      details: `Prescription #${prescription._id.toString().slice(-6)} dispensed by Pharmacist`,
+      performedBy: req.user.id,
+      targetUser: prescription.student
+    })
 
     res.json({ message: 'Prescription dispensed successfully', prescriptionId: prescription._id })
   } catch (err) { next(err) }

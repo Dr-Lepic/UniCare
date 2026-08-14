@@ -68,8 +68,9 @@ const ROLE_CONFIG = {
     bgColor: 'rgba(217,119,6,.15)',
     nav: [
       { to: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-      { icon: Users, label: 'Manage Users', coming: 'M8' },
-      { icon: Activity, label: 'System Logs',  coming: 'M8' },
+      { to: 'users', icon: Users, label: 'Manage Users' },
+      { to: 'logs', icon: Activity, label: 'System Logs' },
+      { to: 'inventory', icon: Boxes, label: 'Inventory Settings' },
     ],
   },
 }
