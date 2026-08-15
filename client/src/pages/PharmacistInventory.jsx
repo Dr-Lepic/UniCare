@@ -128,13 +128,13 @@ export default function PharmacistInventory() {
   return (
     <div className="dashboard">
       {/* Banner */}
-      <div className="dash-hero" style={{ padding: '2rem 1.5rem', marginBottom: '1.5rem', background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)' }}>
+      <div className="dash-hero">
         <div>
           <p className="dash-greeting" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Boxes size={16} /> Pharmacy Inventory
           </p>
-          <h2 className="dash-name" style={{ fontSize: 'var(--fs-xl)', margin: '0.2rem 0' }}>Manage Stock Levels</h2>
-          <span className="dash-badge" style={{ background: 'rgba(255, 255, 255, 0.15)' }}>
+          <h2 className="dash-name">Manage Stock Levels</h2>
+          <span className="dash-badge">
             {totalItems} Catalog Items · {lowStockItems.length} Low Stock Alerts
           </span>
         </div>
