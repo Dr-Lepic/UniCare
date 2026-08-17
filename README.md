@@ -299,58 +299,6 @@ node seed/seed.js
 
 ---
 
-## ❌ Known Issues & Limitations
-
-- **No test suite**: Manual testing only (see milestones for coverage)
-- **Seed script path issue**: `package.json` points to `seed/seedData.js`, but the actual file is `seed/seed.js`
-- **Hardcoded API URL**: Client axios is hardcoded to `http://localhost:5000/api` (no env-based config)
-- **Single tenant**: Not designed for multi-tenant/multi-institution scenarios
-- **No real-time**: REST-only, no WebSocket layer
-- **Dashboard mock data**: Currently placeholder; will be replaced with real API calls per milestone
-
----
-
-## 🗺️ Roadmap
-
-UniCare follows an 8-milestone development plan:
-
-1. ✅ **M1 — Foundation**: User auth, roles, dashboard shells
-2. ✅ **M2 — Appointments**: Booking, queue management
-3. ✅ **M3 — E-Prescriptions**: Write prescriptions with live stock
-4. ✅ **M4 — Shareable Links**: Public prescription sharing
-5. 🔄 **M5 — OTP Dispensing**: OTP-based pharmacy operations
-6. 🔄 **M6 — Reimbursements**: Bill upload, doctor review, tracking
-7. 📅 **M7 — Inventory Management**: Advanced stock control
-8. 📅 **M8 — Analytics**: System dashboards, reporting
-
-See [UniCare_HighLevelDesign_Roadmap.md](UniCare_HighLevelDesign_Roadmap.md) for detailed feature specs.
-
----
-
-## 🤝 Contributing
-
-Before adding features, review:
-1. [CLAUDE.md](CLAUDE.md) — Development guidance for AI assistants
-2. [UniCare_HighLevelDesign_Roadmap.md](UniCare_HighLevelDesign_Roadmap.md) — Feature specifications
-3. [STYLEGUIDE.md](STYLEGUIDE.md) — Design system & token usage
-
-Follow the layered architecture pattern (routes → controllers → models) and always include error handling.
-
----
-
-## 📞 Support
-
-For questions or issues:
-1. Check the [SETUP.md](SETUP.md) troubleshooting section
-2. Review [ARCHITECTURE.md](ARCHITECTURE.md) for API details
-3. See [WALKTHROUGH.md](WALKTHROUGH.md) for feature workflows
-
----
-
 ## 📄 License
 
 ISC
-
----
-
-**Last updated**: August 2026 | Maintained by UniCare Team
